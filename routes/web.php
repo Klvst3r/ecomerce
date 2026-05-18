@@ -18,5 +18,7 @@ Route::get('/', function () {
 //define las rutas del modulo de autenticación register, password reset, login, logout
 Auth::routes();
 
+Route::resource('products', 'ProductController')->middleware('auth');
+
 //Si tratamos de acceder rdirecciona hacia el home
 Route::get('/home', 'HomeController@index')->name('home');

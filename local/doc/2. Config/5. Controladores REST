@@ -42,3 +42,4 @@ update actualiza el recurso en la bd, actualiza en la bd la información
 destroy elimina el recurso, elimina el recurso de la bd
 
 
+Las diferentes iperaciones en el modelos REST.

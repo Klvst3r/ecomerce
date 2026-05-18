@@ -1,0 +1,112 @@
+Para crear un nuevo producto debemos empezar con el metodo create y store
+
+Create desplegara el formulario y store persistira la inforamción en la bd.
+
+La vista debera returnar el resultado de la funcion view.
+
+En vew indicamos donde se enuentra la vista a renderizar.
+
+Las vistas en laravel regularmente se almacenan en 
+resources/views
+
+Dentro tenemos una carpeta view busca los archivos indicados.
+
+resources/views/products/create.blade.php
+
+Blade hace referencia al motor de las vistas de laravel lo que hace blade es ofrecernos beneficios adicioanles, como por ejemplo el manejo del layout el manejo d epartial, ciclos para tener vistas dinamicas que vienen desde el controlador.
+
+La primer pregunta donde debemos acceder el dominio para que se pueda visualizar la vista
+Las rutas rest, entran en juego definen cada una de las fucniones de un conrtroladro restfull.
+
+
+routes.
+
+especificamos todas las rutas del controladro restfull
+
+Piniendo el nombre del recurso, productos y el controlador ProductsController.
+
+Una vez haciendo esto, podremos aceder desde nuestro dominio 
+
+/productos/create
+
+
+Para ver esa vista que generamos.
+
+http://localhost:8000/products/create
+
+Vemos dos cosas.
+
+Una es que es distinto a nuestro diseño y es por que no estamos usando nuestro layut que es un archivo que contienen la caja y contenedor del diseño y debemos sustituir los elementos, algunas cosas se comparten, el menu de navehacion, las hojas de stilos las fuentes, csrf, toda esta información debe estar en el layout y lo distinto estara nuestra directiva yield.
+
+Primero indicamos que debemos usar un laypout.
+
+
+De la parte inicial:
+
+
+
+<div class="continer">
+    <div class="card">
+        <header>
+            <h4>Crear nuevo producto</h4>
+        </header>
+
+        <dic class="card-body">
+
+        </dic>
+    </div>
+</div>
+
+
+
+queda:
+
+y en la ruta:
+
+
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Crear nuevo producto</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Aquí irá el formulario más adelante -->
+                        <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+
+
+
+
+
+
+Checkpack para verificar en el navegador:
+
+Para asegurarte de que al entrar a products/create todo funcione bien, valida rápidamente estos tres puntos en tu proyecto:
+
+    El Controlador: Que tu ProductController tenga el método create apuntando a la vista correcta:
+    PHP
+
+public function create()
+{
+    return view('products.create'); // Asumiendo que está en resources/views/products/create.blade.php
+}
+
+Las Rutas: Que en tu archivo routes/web.php tengas declarada la ruta, ya sea mediante un recurso o de forma individual:
+
+Se va a provechar una de las librerias mas populars de laravel.
+
+
