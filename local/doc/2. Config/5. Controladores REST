@@ -1,0 +1,44 @@
+una petición tradicional luego de que los middlewares hicieron su trabajo la responabilidad pasa hacia un controlador.
+
+
+Tenemos uno
+
+app/Http/Controllers/Auth/RegisterController.php
+
+Los controladores tienen la tarea de enlazar nuestra información con las vistas con las que se repsonde en la peticion, hace consultas a las bd, para crear para obtener datos eliminar o dar una respuesta usando esta información.
+
+En un middelware por ejemplo podemos hacer el render de un archivo html, podemos enviar json, podemos hacer un redireccioamiento como respuestas mas comunes de un controlador.
+
+Varamos a nuestro primer controlador manejaremos los proudctos, actualizarlos, eliminarlos tendremos nuestro primer CRUD que representan crear, actualizar, eliminar y leer.
+
+En este caso vamos a crear un controlador que se encargue de los productos, para esto usaremos el comando:
+
+php artisan make:controller ProductController
+
+Esto nos crea un controlador en la carpeta app/Http/Controllers/ con el nombre ProductController.php
+
+Cuando lo que haremos un controlador haremos un controldor restfull
+
+con artisan hacemos
+
+
+    $ php artisan make:controller ProductController --resource
+
+Esto nos crea un controlador con los metodos necesarios para un CRUD, con los metodos index, create, store, show, edit, update y destroy.
+
+En este caso vamos a crear un controlador que se encargue de los productos, para esto usaremos el comando:
+
+php artisan make:controller ProductController
+
+
+Los controladores rest ya tienen todas las acciones para las operaciones del CRUD
+
+index muestra una colecion del recurso en este acso los productos, paginacion de productso
+create mosramos un formulario para crear nuevo recurso
+store creamos el nuevo recurso, almacenamos en la bd
+show muestra un recurso en especifico, podemos considerarlo como nuestros detalles
+edit muestra un formulario para editar un recurso, podemos reutiliar el formulario de create
+update actualiza el recurso en la bd, actualiza en la bd la información
+destroy elimina el recurso, elimina el recurso de la bd
+
+

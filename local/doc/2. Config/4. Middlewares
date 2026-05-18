@@ -1,0 +1,58 @@
+Middlewares
+
+
+
+El concepto de middlewares es popular en muchos frameworks de Desarrollo Web. Laravel no es la excepción, de hecho, es uno de los frameworks donde se promueve el uso de este concepto para múltiples propósitos.
+
+Un Middleware tiene como propósito tomar dos piezas de la aplicación y conectarlas, como un puente en el que fluye la información. Normalmente decimos que una rutina de código tiene como propósito recibir información y retornarla transformada, la única característica especial de un Middleware es que la información la obtiene de otra función de código para luego enviársela a una función distinta más.
+
+Los middlewares en Laravel son clases con una función handle que recibe un objeto instancia de la clase $request, además de un Closure $next
+
+class EjemploMiddleware
+{
+
+    public function handle($request, Closure $next)
+    {}
+}
+
+Desde aquí podemos notar algo del potencial de un middleware, dado que recibimos el objeto $request, es también posible aprovechar ese objeto para pasar información que sirva luego a los controladores, esto permite que podamos aislar en un solo archivo alguna consulta que aplique para múltiples funciones de nuestros controladores.
+
+La función de un middleware culmina cuando se manda a llamar el argumento $next como una función, con el objeto $request enviándose como argumento:
+
+class EjemploMiddleware
+{
+
+    public function handle($request, Closure $next)
+    {
+        $next($request);
+    }
+}
+
+Esta llamada indica que la petición debe continuar su camino hacia un siguiente middleware o hacia el controlador que le dará respuesta final a la petición.
+
+También es posible enviar una respuesta desde el middleware, por lo que comúnmente se usan para redireccionar al usuario en caso de que alguna condición se haya o no cumplido.
+
+Observa por ejemplo este middleware que viene predefinido con el módulo de Autenticación de Laravel.
+
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Support\Facades\Auth;
+
+class RedirectIfAuthenticated
+{
+
+    public function handle($request, Closure $next, $guard = null)
+    {
+        if (Auth::guard($guard)->check()) {
+            return redirect('/home');
+        }
+
+        return $next($request);
+    }
+}
+
+Verifica si existe una sesión válida y en caso de que exista, redirecciona al usuario hacia el home, caso contrario permite que el flujo de la petición continúe con el siguiente middleware o al controlador, en caso de que no haya ningún middleware.
+

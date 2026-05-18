@@ -1,0 +1,19 @@
+Las migraciones son el registro de la base de datos que nos permite regenerar si nos movemos de equipo si alguien mas se integra al equipo o regenerar si queremos regenerar el desarrollo.
+
+Las migraciones son un lenguaje especifico para la modificacion de la bd,
+
+Al lenguaje lo llamamos des domain especific languaje que es un lenguaje especifico hacia php para crear la bd.
+
+Lo mas importante de las migraciones es que representan un alinea del tiempo que se hicieron a la estructura durante el desarrollo.
+
+si queremos agregar una tabla o una columna, la smodificaciones que un desarrollador se hacen, se indicaran con las demas que cambios se han hecho y se pueden revertir los cambios.
+
+La estructura de ls bd, las tablas, indices, fk, y todo lo relacionado con el esquema de los datos.
+
+
+Para correr nuestras migraciones, 
+
+
+Par nuestro poryecto usaremos el modulo de autenticación, que aunque ya es leacy recordemos como era el proceso de autenticación.
+
+Laravel tiene un sistema de autenticación, sea facil de implementar con el framework

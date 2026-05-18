@@ -1,0 +1,55 @@
+Estos archvos esta en 
+
+app/Http/Middleware/EncryptCookies.php
+
+Por ajemplo aca cn este archivo de autenticación de laravel es que cada vezx que inicie sesion no puedo ir a las pciones regiter por que me lleva a home
+
+Un middleware forma parte de una cadena de middlewares, es decir, se ejecutan en orden, uno tras otro, hasta que uno de ellos decide que no debe continuar y detiene la cadena.
+
+Los middelwares van uno despues d eotro, la peticion del proceso.
+
+Pueden ser datos de un formulario, o revisión de sesiones hace una redirección.
+
+Un middleware termina termina cuando ya no hay un #mext que es un argumento del middleware que sigue en la cade de ejecución y que continua el procesamiento.
+
+Tenemos una respuesta y hace un redireccionamiento hacia home.
+
+podemos revisar mas si revisamos el archivo Kernel.php
+
+Aqui estan espeificados los distintos midldle wares que estan registrados podemos agrupar distitos middlewares.
+
+para web tenemos agrupados, o por apios, o por controlador.
+
+En el archivo Kernel.php, que se encuentra en la carpeta app/Http, se definen los diferentes middlewares que se utilizarán en la aplicación. Estos middlewares se agrupan en diferentes categorías, como web, api, controllers, etc., y se pueden registrar en el archivo Kernel.php para que se ejecuten automáticamente en las peticiones correspondientes.
+
+En el archivo Kernel.php, se pueden encontrar las siguientes categorías de middlewares:
+
+  protected $routeMiddleware = [
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+    ];
+
+
+auth si estamos atenticados podemos acceder a esta ruta.
+
+auth.basic si estamos atenticados podemos acceder a esta ruta.
+
+bindings si estamos atenticados podemos acceder a esta ruta.
+
+cache.headers si estamos atenticados podemos acceder a esta ruta.
+
+can si estamos atenticados podemos acceder a esta ruta.
+
+guest si estamos atenticados podemos acceder a esta ruta.
+
+throttle si estamos atenticados podemos acceder a esta ruta.
+
+
+Por ahora podemos revisar el primero para el modulo de autenticación.
+
+

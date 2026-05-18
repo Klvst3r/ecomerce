@@ -1,0 +1,83 @@
+Para la autenticación usaremos
+    $ php artisan make:auth
+    $ php artisan migrate
+
+Para la creación de roles y permisos
+    $ php artisan make:permission ManageUsers
+    $ php artisan make:permission ManagePosts
+    $ php artisan make:permission ManageComments
+
+Para asignar permisos a roles
+    $ php artisan db:seed --class=RolesAndPermissionsSeeder
+
+Para crear un usuario administrador
+    $ php artisan make:user --admin
+
+Para crear un usuario normal
+    $ php artisan make:user --user
+
+Para crear un usuario moderador
+    $ php artisan make:user --moderator
+
+Para crear un usuario editor
+
+Artisan es el manejador de generadores que viene con Laravel a traves de artisan podemos crear nuestros controladores, modelos, integrar modulos como el de autenticación, integrar librerias como Rec o angular y demas.
+
+En este caso generamos los archivos que se necesitan con el modulo de autenticación.
+
+database/migrations/2014_10_12_000000_create_users_table.php
+database/migrations/2014_10_12_100000_create_password_resets_table.php
+
+Entre las diferentes cosas qe se tienen en la carpate DB_DATABASE
+    $ php artisan make:migration create_users_table --create=users
+    $ php artisan make:migration create_password_resets_table --create=password_resets
+    $ php artisan make:migration create_permission_table --create=permissions
+    $ php artisan make:migration create_role_table --create=roles
+    $ php artisan make:migration create_role_user_table --create=role_user
+    $ php artisan make:migration create_permission_role_table --create=permission_role
+
+    $ php artisan migrate
+
+    $ php artisan make:seeder RolesAndPermissionsSeeder
+
+Con nuestro sistema de control de versiones podemos hacia varios puntos atras despues de las modificaciones, i rompemos un esquema podemos regresar a la migracion o revertimos la migraicon y volvemos a migrar,
+
+Volvemos a modificar sobre la base de datos.
+
+Las dos acciones on up y downgrade
+upo define a traves del lenajuaje de migraciones la estructura de la bd. y down hace el inverso de las modificaciones, por esto si eon cl primer comando creamos la bd con dwon la eliminamos.
+
+El modulo de autenticación genero dos migraciones.
+
+
+
+En nuestra migracion cuando vamos a especificar que una migracion contenga una columna en especifico utilizamos el objeto table que recibimos dela rgumento table que tiene metodos que estan mapeados con nada tipo de datos que esta utilizando nuesra bd.
+
+por ejemplo cuando ejecutamos string -> varchar(255) lo que aparece el argumento es el nombre del campo y podemos tener mas parametros para especificar demas elementos del campo o la tabla a estos se les denominamos modificadores.
+
+Ej.
+unique agrega una regla de validacion que debe ser unico.
+
+Algunos otros son.
+
+default -> valor por defecto cuando no se especifica Alguno
+nullable-> cuando un valor no puede guardar un valor a la bd, indicamos el campo puede o no tener valor.
+
+Para correr las migraciones haremos
+
+    $ php artisan migrate
+
+Para crear una migracion
+
+    $ php artisan make:migration create_users_table --create=users
+
+Para crear una migracion que elimine una tabla
+
+    $ php artisan make:migration drop_users_table --table=users
+
+Para crear una migracion que actualize una tabla
+
+    $ php artisan make:migration add_votes_to_users_table --table=users
+
+Para verificar que migraciones se han ejecutado esta una tabla llamada migrations
+

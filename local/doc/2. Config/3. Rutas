@@ -1,0 +1,51 @@
+Las rutas del proyecto
+
+Son las direcciones del proyeccto que podemos especificar y que indican el camino a seguir, por ejemplo / la ruta base
+/register -> formulario de registro
+
+
+estan en la carpeta routes.
+
+Algunas estan en api, que pasan en un middleware las ais consumen JSON, y eb sirven paginas tradicionales.
+
+web.php manejas sesiones
+api.php no manejan sesiones.
+
+
+trabajaremos con web.php
+Tenemos el metodo route, define el sistema de autenbticación y la ruta para actualizar la contraseña
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+//define las rutas del modulo de autenticación register, password reset, login, logout
+Auth::routes();
+
+//Si tratamos de acceder rdirecciona hacia el home
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+Inicaremos creando un acuenta inicial
+
+Tendremos como ejemplo esto.
+Name: Klvst3r
+email: klvst3r@ecommerce.com
+password: 12345678
+
+En nuestro caso usamos los tradicionales de desarrollo
+
+
+
+En la carpeta resources/views creamos una carpeta auth y dentro de ella una carpeta password y dentro de ella un archivo email.blade.php
+
+En la carpeta resources/views creamos una carpeta auth y dentro de ella una carpeta password y dentro de ella un archivo email.blade.php
+
+
+Podemos acceder a home, por que ya hemos inicado sesión. 
+
+
+La aplicación desde la base ya viene con defecto con bootstrap que de momento es el framework que usamos inicialmente, aunque podemos usar vue y React.
+
+
