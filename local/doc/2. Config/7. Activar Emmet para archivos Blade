@@ -1,0 +1,47 @@
+Al ser una plataforma basada en el núcleo de VS Code, tienes toda la potencia de su ecosistema de extensiones, pero gestionado desde su propio catálogo o configuración web.
+
+
+Para lograr exactamente el comportamiento de escribir div y que se expanda mágicamente a <div></div>, tienes dos caminos directos dentro de Antigravity:
+
+
+Opción 1: Activar Emmet para archivos Blade (Sin instalar nada)VS Code (y por ende Antigravity) ya incluye Emmet integrado de fábrica. 
+
+El problema clásico con los proyectos de Laravel es que el editor ve la extensión .blade.php y piensa: "Esto es PHP puro, no tengo por qué expandir etiquetas HTML aquí".Para enseñarle a Antigravity que trate a Blade como HTML para el autocompletado, sigue estos pasos:
+
+
+1.Abrir la configuración (Settings):
+
+Paso 1.Presiona Ctrl + , (o ve al ícono de la engranaje abajo a la izquierda) para abrir los Ajustes de Antigravity.
+
+2.Cambiar a la vista JSON:Paso 2.En la esquina superior derecha de la pestaña de ajustes, haz clic en el ícono del archivo con una flecha girando para "Open Settings (JSON)".
+
+
+3.Agregar la asociación de Emmet:
+
+Paso 3.Dentro de las llaves principales de tu archivo settings.json, añade las siguientes líneas de configuración:JSON
+
+"emmet.includeLanguages": {
+    "blade": "html"
+},
+"emmet.triggerExpansionOnTab": true
+
+instantáneamente en <div></div>. ¡Incluso puedes hacer locuras legacy como escribir div.form-group + Tab y te generará <div class="form-group"></div>!
+Opción 2: Instalar la extensión "Auto Close Tag"
+
+Si prefieres el comportamiento exacto de VS Code donde al escribir el cierre de la primera etiqueta (> de <div>) se autocompleta el resto, ve al panel de Extensiones en la barra lateral izquierda de Antigravity (el ícono de los cuatro cubos cuadrados), busca e instala:
+
+    Auto Close Tag (de Jun Han)
+
+Una vez instalada, para asegurarte de que no ignore los archivos de Laravel, regresa a tu settings.json (como vimos en el Paso 2 de arriba) y asegúrate de que "blade" esté incluido en los lenguajes activados para la extensión:
+
+
+"auto-close-tag.activationOnLanguages": [
+    "html",
+    "xml",
+    "blade",
+    "php"
+]
+
+
+ualquiera de las dos opciones te va a devolver esa velocidad de desarrollo tan cómoda a la que estás acostumbrado con Vue, pero directo en tus vistas Blade
+

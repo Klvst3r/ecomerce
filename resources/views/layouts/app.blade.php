@@ -10,15 +10,24 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    
+
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+     <!-- Puede qudar corregido anteponiendo /  -->
+      <!-- ej_ <link rel="stylesheet" href="/css/app.css"> -->
+    <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
+     <script src="{{ asset('js/app.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+    <!-- CSS -->
+     <!-- Tambien aca puede quedar: -->
+<!-- <script src="/js/app.js"></script> -->
+     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 <body>
     <div id="app">

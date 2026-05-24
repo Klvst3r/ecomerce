@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -24,7 +26,9 @@ class ProductController extends Controller
     public function create()
     {
         //Mostramos el frmulario para crear un nuevo producto
-        return view('products.create');
+        $product = new Product();
+        // return view('products.create', ['product' => $product]);
+        return view('products.create', compact('product'));
     }
 
     /**
@@ -57,7 +61,27 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        //$product = Product::find($id);
+
+        // return view('products.edit', compact('product'));
+        //  return view('products.edit', ["product" => $product]);
+     
+        // return view('products.form', ["product" => $product]);
+
+        // La clave de la izquierda DEBE ser 'product' en singular
+        // 1. Inyecta esto aquí temporalmente:
+    //dd($id, $product);
+
+    //return view('products.edit', ['product' => $product]);
+
+
+    
+    // findOrFail asegura que regrese una instancia del Modelo Product (un objeto limpio)
+    // y no un constructor de consultas (Query Builder).
+    $product = Product::findOrFail($id);
+
+    return view('products.edit', compact('product'));
+
     }
 
     /**

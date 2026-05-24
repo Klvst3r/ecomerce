@@ -6,7 +6,8 @@
             <div class="col-md-12">
                 <div class="card padding">
                     <div class="card-header bg-white">
-                        <h4 class="mb-0">Crear nuevo producto</h4>
+                        <h4 class="mb-0">Editar producto</h4>
+                        <p>{{ $product->title }}</p>
                     </div>
 
                     <div class="card-body">

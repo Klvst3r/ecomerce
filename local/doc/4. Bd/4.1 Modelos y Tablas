@@ -1,0 +1,95 @@
+Antes de continuar con los conroladores del REST de Prodcutos necesitamos la tabla para almacenar los productos, pero tambien necesitaremos un modelo.
+
+Para ello generaremos el modelo 
+
+Los modelos se encargan de hacer todo el trabajo o conusltas d ela bd mediante metodos que ya vienen definidos en un modulo que Laravel se llama Eloquent el cual traduce el lenguaje SQL a metodos que
+tienen los metodos para que via programacion orientada a objetos puedoamos adminisrar la bd.
+
+Para ello ejecutamos para crear nuestro modelo, junto a una mugración.
+
+    $ php artisan make:model -m Product
+
+
+
+    debe de crearse una migration 
+
+    migrations/002_create_products_table.php
+
+    Y dentro de 
+
+
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->timestamps();
+        });
+    }
+
+
+    Como no tenemos el campo 'price' en la vista 
+
+
+    Quedando finalmente nuestra migración:
+
+     public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->increments('id');
+            
+            $table->string('title');
+            $table->decimal('price', 10, 2)->default(0);
+            $table->text('description')->nullable();
+            $table->string('image_url')->nullable();
+
+
+            $table->timestamps();
+        });
+    }
+
+Vamos a ejecutarla
+
+$ php artisan migrate
+
+Ahora vamos al modelo   que esta heredando de la clase Model  de Eloquent eso quiere decir que esta clase tienen metodos relacionados con las consultas a las tables correspondientes
+
+Laravel sabe a que tabla se refiere por la convención de nomenclatura
+
+El modelo se escribe en singular y la migracion en plural. 
+
+    Product -> products
+
+Es importante que tengan nombres en ingles a distinguir el plural del modelo, como recomendación.
+
+en el modelo es importante el atributo fillable que debe contener un arreglo con todos los campos de la tabla que se pupeden asignar en masa, estos atributos se espera que modifiquemos en el flujo de nuesra aplicaciń.
+
+Estos se modificaran via formulario.
+
+Se deben evitar campos que vulneran la seguridad de la aplicacion, como
+
+    id
+    timestamps
+    token 
+    
+permisos o nivel de permisos no debe estar en fillable, ya que nos arriesgamos a que intyecte con valor de permisos, vi formulario y se guarde de manera accidental.
+
+Esto es una práctica común en el desarrollo de aplicaciones web de protección los campos que deban modificarse via formulario.
+
+
+Con esto estamos listos para guardar nuestro primer producto:
+
+class Product extends Model
+{
+    
+    protected $fillable = [
+        'title',
+        'price',
+        'description',
+        'image_url',
+    ];
+}
+
+

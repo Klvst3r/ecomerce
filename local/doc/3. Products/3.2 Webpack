@@ -1,0 +1,322 @@
+Laravel viene preconfigurado con Webpack para el manejo de los assets de la aplicación, y viene configurado por default con Bootstrap 5.6 o superiores y con Vue un alibreria con componentes de JSON
+
+Topdo eso implica adicionales cuando queremos hacer nuestroas modificaciones con los assets
+abrimos el archivo
+package.json
+
+En la seccion de scripts
+
+  "scripts": {
+        "dev": "npm run development",
+        "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "watch-poll": "npm run watch -- --watch-poll",
+        "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "prod": "npm run production",
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    },
+
+    tenemos algunos comandos que se pueden ejecutar con la configuración de webpack par manejar los assets
+
+
+    por ejecutar
+    prod, ejecuta la configuracion que creara los assets para producción y uno de los que usaremos es watch, dev y watch-poll
+
+    dev lo que hace es reconstruir nuestros asses para reconstruirlos en tiempo de ejecuciṕon para ver refrescados en la pagina, 
+
+    watch es como ejecutar constantemente de cada vez que se guarda algun nuevo archivo.
+
+
+    cuando estamos en background el comando es watch-poll, que es como un watch pero con un tiempo de espera de 1000 milisegundos, esto es util cuando estamos en background y no queremos que se ejecute el watch.
+
+    Lo que tenbemos que hacer es actualizara nuestros assets
+    y posiblemente solicitara las deoendencias con npm
+
+    Para ello instalaremos npm
+
+    $ npm install
+
+    $ npm
+
+
+    Lo que hace npm es agarrar todas las dependencias que estan listadas y las instalara en node modules que tambien se debe de generar dentro de nuestro proyecto,
+
+
+    Las que estan especificadas en 
+
+
+     "devDependencies": {
+        "axios": "^0.17",
+        "bootstrap": "^4.0.0",
+        "popper.js": "^1.12",
+        "cross-env": "^5.1",
+        "jquery": "^3.2",
+        "laravel-mix": "^2.0",
+        "lodash": "^4.17.4",
+        "vue": "^2.5.7"
+    }
+
+
+    y las dependencias de estas mismas librerias por ejemplo bootstrap tiene sus propias dependencias como jquery y popper.js,
+    
+
+    ahora podremos correr ya
+
+    $ npm run watch -- --watch-poll
+
+o en nuestro caso vmaos a iptar por 
+
+$ npm run dev
+
+
+
+Como nos generoi errores vamos al plan de funcionamiento para Webpack:
+
+hay un truco clásico de ingenieros de software para salir de este bucle cuando estamos atrapados con dependencias legacy caprichosas. Podemos forzar a NPM a congelar de verdad las subdependencias usando la propiedad overrides (o resoluciones) en el package.json, u optar por la vía rápida y 100% segura para Blade.
+
+Revisemos las dos alternativas definitivas para que sigas aprendiendo:
+Opción 1: Forzar las versiones con overrides (La solución técnica)
+
+NPM tiene una herramienta oculta para decirle: "No me importa lo que pidan los subpaquetes intermedios, vas a usar ESTA versión exacta de Webpack".
+
+Abre tu package.json en Antigravity y añade la propiedad "overrides" justo debajo de tus dependencias para amarrar la versión 5.60.0:
+JSON
+
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-poll",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "axios": "^0.17",
+        "bootstrap": "^4.0.0",
+        "cross-env": "^7.0.3",
+        "jquery": "^3.2",
+        "laravel-mix": "^6.0.49",
+        "lodash": "^4.17.4",
+        "popper.js": "^1.12",
+        "postcss": "^8.4.0",
+        "sass": "^1.60.0",
+        "vue": "^2.6.14",
+        "vue-loader": "^15.9.8",
+        "vue-template-compiler": "^2.6.14",
+        "webpack": "5.60.0",
+        "webpack-cli": "4.9.1"
+    },
+    "overrides": {
+        "webpack": "5.60.0"
+    }
+}
+
+(Nota que quitamos el símbolo ^ de Webpack en las dependencias para evitar que NPM intente buscar actualizaciones).
+
+Vuelve a limpiar e instalar en tu consola:
+Bash
+
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
+npm run dev
+
+Opción 2: El plan B educativo (Compilar "a la antigüita" sin Mix)
+
+Si tu meta principal es recordar código Blade, controladores, modelos y rutas de Laravel 5.6 sin perder el hilo por culpa de los atascos de Webpack/JavaScript, recuerda que no es obligatorio usar Laravel Mix para que tu HTML cobre vida.
+
+En la época dorada, si el empaquetador fallaba, simplemente metíamos los estilos directo en el Layout principal (resources/views/layouts/app.blade.php) usando CDNs estables. Esto te permite saltarte la terminal de Node por completo y enfocarte en el código PHP del Ecommerce.
+
+Puedes cambiar las llamadas de Mix en tu Layout:
+Blade
+
+{{-- En lugar de usar {{ mix('css/app.css') }} --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
+{{-- Al final del body, en lugar de {{ mix('js/app.js') }} --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+Con esto, ejecutas tu servidor de desarrollo PHP local de toda la vida:
+Bash
+
+php artisan serve
+
+Y podrás entrar a ver tus vistas Blade y formularios de Laravel Collective directamente en el navegador sin depender de Webpack.
+
+
+
+Ya pasamos el obstáculo de Webpack y el candado de las versiones funcionó a la perfección. Ese mensaje donde Mix te instaló automáticamente los loaders de Sass fue el banderazo de salida.
+
+El error actual (You may need an appropriate loader to handle this file type) es super común cuando se salta de un Laravel Mix antiguo a la versión 6. Webpack ya funciona, pero está intentando leer el archivo de ejemplo ExampleComponent.vue como si fuera texto plano en lugar de un componente de Vue.
+
+Esto pasa porque en Mix 6, tienes que indicarle explícitamente en el archivo de configuración que vas a compilar Vue. Es un cambio de una sola línea.
+La Solución: Activar Vue en tu webpack.mix.js
+
+Abre el archivo webpack.mix.js que está en la raíz de tu proyecto en Antigravity. Seguramente se ve algo parecido a esto:
+JavaScript
+
+const mix = require('laravel-mix');
+
+mix.js('resources/assets/js/app.js', 'public/js')
+   .sass('resources/assets/sass/app.scss', 'public/css');
+
+Lo único que debes hacer es encadenar el método .vue() al final del script de Javascript para activar el cargador. Déjalo exactamente así:
+JavaScript
+
+const mix = require('laravel-mix');
+
+mix.js('resources/assets/js/app.js', 'public/js')
+   .vue({ version: 2 }) // <-- ¡Esta es la magia para decirle que use Vue 2!
+   .sass('resources/assets/sass/app.scss', 'public/css');
+
+El Paso Final
+
+Guarda el archivo (Ctrl + S) y vuelve a ejecutar tu comando en la terminal:
+Bash
+
+npm run dev
+
+    💡 Nota: Al igual que hace un momento, como es la primera vez que Mix detecta el método .vue(), es muy probable que la terminal te lance un aviso diciendo que necesita descargar vue-loader o algún complemento interno para dejarlo listo. Si lo hace, déjalo terminar y vuelve a correr npm run dev.
+
+
+Ahora tienes un puente perfecto: estás ejecutando Node v20 moderno en tu máquina, pero tu proyecto entiende perfectamente el Vue 2 original, el Sass de Bootstrap 4 y las plantillas Blade de tu Ecommerce.
+
+Ya que toda la maquinaria visual y de assets quedó al 100%, tu entorno de desarrollo local está listo para que tires código a placer.
+Siguientes pasos recomendados para tu repaso legacy
+
+Para poner a prueba que todo este esfuerzo se refleje en el navegador, aquí tienes los tres comandos esenciales para reactivar el backend:
+
+    Levantar el servidor local de PHP:
+
+php artisan serve
+
+2. **Crear tu base de datos local (MariaDB/MySQL) y correr las migraciones básicas:**
+   ```bash
+   php artisan migrate
+
+    Tu comando de batalla para los estilos:
+    Si vas a estar modificando las vistas Blade o las hojas de estilo SASS y quieres ver los cambios al instante sin estar ejecutando npm run dev a cada rato, recuerda dejar corriendo este proceso en una pestaña de tu Konsole:
+
+npm run watch
+
+Dentro del archivo package.json hay paquetes que hacen referencia a los assets por ejemplo
+resources/assets/sass/app.scss y resources/assets/js/app.js
+
+Pra las hojas de estilos, con el rpocesador de SASS agregando funcionalidades a CSS.
+
+vamos ahora que los divs que son hjos directos tengan un margen, entonces modificamos asi:
+
+
+Agregamos ademas que cuando tenga la clase padding modificamos:
+
+entonces si vamos a la ruta del formulario tendremos los camnios aplicados
+
+
+resumen de lo que hicimos:
+
+npm install
+npm uninstall node-sass
+npm install sass --save-dev
+npm install cross-env --save-dev
+npm install --include=dev
+npm audit fix --force
+npm audit
+npm audit fix --force
+rm -rf node_modules package-lock.json
+npm install --legacy-peer-deps
+npm run dev
+npm run watch --watch-poll
+
+en el navegador:
+
+
+http://localhost:8000/products/create
+
+resultado de la modificación del archivo de configuración de SASS
+
+resources/assets/sass/app.scss
+
+        // Fonts
+        @import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
+        // Variables
+        @import "variables";
+
+        // Bootstrap
+        @import '~bootstrap/scss/bootstrap';
+
+        .navbar-laravel {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .app-form>div {
+
+        margin-top: 1em;
+        }
+
+        .card.padding {
+
+        padding: 1em;
+        }
+
+
+
+
+en el archivo del formulario:
+
+resources/views/products/form.blade.php
+
+{!! Form::open(['url' => '/productos', 'files' => 'app-form', 'method' => 'POST']) !!}
+<div>
+    {!! Form::label('title', 'Nombre del producto') !!}
+    {!! Form::text('title','', ['class' => 'form-control']) !!}
+</div><br>
+<div>
+    {!! Form::label('description', 'Descripción del producto') !!}
+    {!! Form::textarea('description','', ['class' => 'form-control']) !!}
+</div><br>
+<div>
+    {!! Form::label('price', 'Precio del producto') !!}
+    {!! Form::text('price', 0, ['class' => 'form-control']) !!}
+</div><br>
+<div class="">
+<input type="submit" value="Guardar" class="btn btn-primary">
+</div>
+
+{{-- {!! Form::submit('Guardar') !!} --}}
+{!! Form::close() !!}
+
+y el en create:
+
+resources/views/products/create.blade.php
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card padding">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Crear nuevo producto</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Aquí irá el formulario más adelante -->
+                        <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+
+                        <!-- Incluimos la vista parcial 'products.form' para crear un nuevo producto -->
+                        @include('products.form')    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+Ahora ya tenemos el Front.

@@ -1,0 +1,64 @@
+ quiero que en antigravity al presionar CTRL + K + B la barra lateral de archivos se olculte o se muestre segun sea el caso importe las extensiones de sublime text keybingin
+
+¡Entendido! El detalle aquí es que la extensión de atajos de Sublime Text configura por defecto el comando para ocultar la barra lateral usando una combinación secuencial (un chord): presionas Ctrl + K, sueltas, y luego presionas B.
+
+Si al presionar Ctrl + K + B en Antigravity no te está funcionando o quieres asegurarte de que responda exactamente a tu memoria muscular, podemos forzar la configuración directamente en el archivo de asignación de teclas (keybindings.json) de la plataforma.
+
+Aquí tienes los pasos para dejarlo configurado de forma nativa:
+Cómo forzar el atajo en Antigravity
+
+Al estar basado en Code-OSS, puedes mapear cualquier comando del sistema a la combinación que tú quieras.
+
+1
+Abrir los atajos de teclado del usuario
+Paso 1
+
+Presiona Ctrl + Shift + P para abrir la paleta de comandos de Antigravity. Escribe "Preferences: Open Keyboard Shortcuts (JSON)" y selecciónalo. Esto abrirá un archivo plano llamado keybindings.json.
+2
+Agregar la regla para la barra lateral
+Paso 2
+
+Dentro de los corchetes [] de ese archivo, pega la siguiente configuración. Si ya tienes otros atajos, asegúrate de poner una coma , al inicio:
+JSON
+
+{
+    "key": "ctrl+k ctrl+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+}
+
+3
+Guardar los cambios
+Paso 3
+
+Guarda el archivo con Ctrl + S.
+💡 Un detalle importante sobre cómo presionarlo
+
+Recuerda que la sintaxis "ctrl+k ctrl+b" significa que el editor espera una secuencia:
+
+    Mantén presionado Ctrl y presiona K.
+
+    Suelta ambas teclas (Antigravity se quedará esperando el segundo comando en la barra de estado inferior).
+
+    Presiona rápidamente la tecla B.
+
+Con esto, la barra lateral se ocultará o se mostrará inmediatamente. Si por alguna razón prefieres que sea un golpe directo (es decir, mantener presionado Ctrl y presionar B directamente sin la K, que es el estándar nativo de VS Code), puedes cambiar la propiedad "key" a simplemente "ctrl+b". ¡Configúralo como te sea más cómodo para este repaso de código!
+
+
+Quedo mi archivo asi:
+
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+meta+numpad2",
+        "command": "workbench.action.editorLayoutTwoColumns"
+    },
+    {
+        "key": "ctrl+meta+numpad1",
+        "command": "workbench.action.editorLayoutSingle"
+    },
+    {
+    "key": "ctrl+k ctrl+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+}
+
+]

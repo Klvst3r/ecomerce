@@ -1,0 +1,195 @@
+Las rutas rest las podemos dividir en dos grandes grupos:
+
+1. las que son para collecciones stores, create, index, que no ase asocien a ningun recursos en especifico.
+
+2. Las que son para recursos show, update, edit, destroy, que hace referencia a un recurso en especifico. Se identifican por que reciben un id como parte de la petición.
+
+al trabajar en el formulario de actualización que se uestra en la acción edit.
+
+En Product controller trabajamos en el metodo edit:
+
+     */
+    public function edit($id)
+    {
+        $product = Product::find($id);
+
+        return view('products.edit', compact('product'));
+    }
+
+Como necesitamos enviarle información al formulario desde el controlador a la vista entonces desde el controlador mandamos a la vista con el segundo parametro en el render d ela vista
+
+Entonces necesitamos una nueva vista podemos llamarla edit.blade.php
+Para ir a esta vista en el navegador
+
+
+Para tener información en nuestra tabla correctamente hacemos esto con tinker:
+
+
+En tu terminal de Antigravity, ejecuta el siguiente comando:
+Bash
+
+php artisan tinker
+
+2
+Ejecutar el comando de creación
+Paso 2
+
+Pega la siguiente instrucción de Eloquent para guardar un producto de prueba y presiona Enter:
+PHP
+
+App\Product::create(['title' => 'Producto de Prueba Legacy', 'price' => 19.99, 'description' => 'Creado desde Tinker']);
+
+3
+Salir de Tinker
+
+Cuando hacemos una consulta a la BD, nos devuelve un objeto que es una instancia de product del modelo donde los atributos corresponden a los campos de la tabla products, 
+
+podemos utilizar esa misma información para prellenar la información.
+
+entonces en edit hacemos:
+
+  public function create()
+    {
+        //Mostramos el frmulario para crear un nuevo producto
+        $product = new Product();
+        return view('products.create', ['product' => $product]);
+    }
+
+Esto permite reciclar el formulario tanto para crear como para actualizar productos.    
+
+Podemos utilizar el mismo formulario en ambos casos, aun con algunas situaciones que hay que considerar, como la dirección es a la cual va la dirección, para crear utilixzamos el metodo post y para ctualizar 
+
+tenemos el metodo put / patch. 
+
+entonces en el modelo.
+
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    
+    protected $fillable = [
+        'title',
+        'price',
+        'description',
+        'image_url',
+    ];
+
+    public function url(){
+       return $this->id ? 'products.update' : 'products.store';
+    }
+
+    public function method(){
+        return $this->id ? 'PUT' : 'POST';
+    }   
+
+    protected $attributes = [
+        'image_url' => null,
+    ];
+
+    public function price()
+    {
+        return $this->price;
+    }
+}
+
+
+y el formulario quedo habilitado para edicion o creación
+
+
+<!-- {!! Form::open(['url' => '/productos', 'files' => 'app-form', 'method' => 'POST']) !!} -->
+@if($product->id)
+    {{-- Modo Edición: Forzamos la ruta update, el ID y el método PUT de forma explícita --}}
+    {!! Form::model($product, ['route' => ['products.update', $product->id], 'method' => 'PUT', 'files' => true]) !!}
+@else
+    {{-- Modo Creación: Usamos la ruta store y el método POST estándar --}}
+    {!! Form::open(['route' => 'products.store', 'method' => 'POST', 'files' => true]) !!}
+@endif
+
+<div class="form-group mb-3">
+    {!! Form::label('title', 'Nombre del producto') !!}
+    {!! Form::text('title', null, ['class' => 'form-control']) !!}
+</div>
+
+<div class="form-group mb-3">
+    {!! Form::label('description', 'Descripción del producto') !!}
+    {!! Form::textarea('description', null, ['class' => 'form-control', 'rows' => 4]) !!}
+</div>
+
+<div class="form-group mb-4">
+    {!! Form::label('price', 'Precio del producto') !!}
+    {!! Form::text('price', null, ['class' => 'form-control']) !!}
+</div>
+
+<div class="">
+    <input type="submit" value="Guardar" class="btn btn-primary">
+</div>
+
+{!! Form::close() !!}
+
+
+
+
+¿Por qué esto soluciona el problema para siempre?
+
+Al separar el formulario en un simple @if / @else tradicional de Blade:
+
+    Ya no mandas llamar a $product->method() ni a $product->url() dentro del inicializador del formulario.
+
+    Evitas que el motor interno de Laravel Collective se confunda con los nombres de tus funciones del modelo.
+
+    El código se vuelve mucho más legible y fácil de mantener si en el futuro decides cambiar las rutas.
+
+
+Al visualizar el formulario de edicion tenemo un mensaje
+
+
+Download the Vue Devtools extension for a better development experience:
+https://github.com/vuejs/vue-devtools app.js:46606:55
+You are running Vue in development mode.
+Make sure to turn on production mode when deploying for production.
+See more tips at https://vuejs.org/guide/deployment.html app.js:46614:51
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: http://localhost:8000/js/app.js
+Source Map URL: popper.js.map
+
+​
+
+Este es un aviso exclusivo para los ojos del navegador (no para tu código). Popper.js (la librería que usa Bootstrap 4 para los menús desplegables) busca un archivo de depuración llamado popper.js.map para ayudar a mapear las líneas de código en la consola. Al no encontrarlo en la carpeta public, el navegador lanza ese aviso silencioso de que faltó ese mapa técnico. Tus menús, botones y animaciones seguirán funcionando exactamente igual.
+
+
+
+En el tema de los metodos del formulario tenemos para creacion post y para edit put, pero en el navegador nos muestra en edit algo como:
+
+
+
+
+
+<form method="POST" action="http://localhost:8000/products/1" accept-charset="UTF-8" enctype="multipart/form-data">
+<input name="_method" type="hidden" value="PUT">
+<input name="_token" type="hidden" value="iqNmG2qbm2nCOsHiwdnwsOlEuP7tsivUhcshQbyi"> 
+<div class="form-group mb-3"><label for="title">Nombre del producto</label> 
+<input name="title" type="text" value="Producto de Prueba Legacy" id="title" class="form-control"></div> 
+<div class="form-group mb-3"><label for="description">Descripción del producto</label> 
+<textarea rows="4" name="description" cols="50" id="description" class="form-control">Creado desde Tinker</textarea></div> 
+<div class="form-group mb-4"><label for="price">Precio del producto</label> 
+<input name="price" type="text" value="19.99" id="price" class="form-control"></div> 
+<div><input type="submit" value="Guardar" class="btn btn-primary"></div></form>
+
+
+
+
+<form method="POST" action="http://localhost:8000/products/1" accept-charset="UTF-8" enctype="multipart/form-data">
+<input name="_method" type="hidden" value="PUT">
+
+esto agrega para cambiarlo al metodo put, por que el navegador no soporta verbos con los metodos put, para procesarmiento las estamos simulando, una vez podemos hacer la actualización.
+
+
+
+

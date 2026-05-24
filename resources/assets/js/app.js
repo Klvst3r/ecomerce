@@ -7,7 +7,10 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+// window.Vue = require('vue');
+
+import Vue from 'vue';
+window.Vue = Vue;
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -15,8 +18,20 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+/*
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
 const app = new Vue({
     el: '#app'
+});
+
+*/
+
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+// Envolvemos la creación de la app de Vue para que espere al navegador
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new Vue({
+        el: '#app'
+    });
 });

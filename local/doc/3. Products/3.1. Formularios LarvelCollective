@@ -1,0 +1,382 @@
+Laravel Collective es una libreria que nos permite crear formularios mas rapidos y comodos, en lugar de crear los formularios manualmente con html, laravel collective nos ofrece metodos para crear formularios con laravel.
+
+
+https://laravelcollective.com/docs
+
+
+Manteinen paquetes de laravel que ahora ya no lo son:
+
+tenemos que utilizar composer
+
+en la carpeta del proyecto
+
+
+
+El comando correcto es:
+$ composer require laravelcollective/html:^5.6
+
+HTML & Form
+
+registramos los proveedores:
+
+Esta version encaja con la version de laravel con la que estamos trabajando.
+
+Hay paquetes ya abandonados, en componentes legacy, nuestro proyecto es ppara fines educativos, por lo que usaremos:
+
+    $ composer require laravelcollective/html:^5.6 --no-audit
+
+* **Para actualizar los paquetes ignorando las alertas:**
+  ```bash
+$ composer update --no-audit
+
+en nuestro caso nos genero algo como:
+
+
+
+Para reactivar esa memoria muscular de código legacy, repasemos las herramientas clave de Blade y la sintaxis de laravelcollective/html que marcaron el estándar en esos años para armar un formulario de un Ecommerce (por ejemplo, para crear un producto).
+1. El Formulario Legacy (laravelcollective/html)
+
+En lugar de escribir etiquetas <form> y <input> a mano, se utilizaban los atajos (helpers) que se conectaban automáticamente con las sesiones y los errores de validación.
+
+Abre una vista (por ejemplo, resources/views/admin/products/create.blade.php) y mira cómo se estructuraba el código en esos tiempos:
+Blade
+
+{{-- Abrir el formulario y enlazarlo a la ruta de almacenamiento --}}
+{!! Form::open(['route' => 'products.store', 'method' => 'POST', 'files' => true]) !!}
+
+    <div class="form-group">
+        {!! Form::label('name', 'Nombre del Producto:') !!}
+        {{-- El segundo parámetro es el valor por defecto --}}
+        {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'Ej. Camisa de Algodón']) !!}
+        
+        {{-- Mostrar error de validación clásico de Laravel 5.6 --}}
+        @if ($errors->has('name'))
+            <span class="text-danger">{{ $errors->first('name') }}</span>
+        @endif
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('category_id', 'Categoría:') !!}
+        {{-- Generaba un <select> automático pasándole un array [$id => $nombre] --}}
+        {!! Form::select('category_id', $categories, null, ['class' => 'form-control', 'placeholder' => 'Selecciona...']) !!}
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('price', 'Precio:') !!}
+        {!! Form::number('price', null, ['class' => 'form-control', 'step' => '0.01']) !!}
+    </div>
+
+    {!! Form::submit('Guardar Producto', ['class' => 'btn btn-primary']) !!}
+
+{!! Form::close() !!}
+
+    💡 Recordatorio de seguridad: ¿Te diste cuenta de que no pusimos el campo @csrf? Esa era la magia de Form::open(). El paquete inyectaba automáticamente el input oculto con el token de seguridad CSRF sin que tuvieras que escribirlo.
+
+2. Estructura de Plantillas (El clásico @extends y @section)
+
+Hoy en Vue manejas componentes y slots, pero en el Laravel clásico dependíamos de la herencia de plantillas. Así se definía el Layout base (layouts/app.blade.php):
+Blade
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ecommerce Legacy</title>
+    <!-- En esos tiempos se usaba mucho Bootstrap de CDN o compilado con Laravel Mix -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Mi Tienda Legacy</a>
+    </nav>
+
+    <div class="container mt-4">
+        {{-- Aquí se inyectaba el contenido de las vistas hijas --}}
+        @yield('content')
+    </div>
+
+    {{-- Se reservaba un espacio para scripts específicos de una vista --}}
+    @stack('scripts')
+</body>
+</html>
+
+Y para consumirlo en tu vista de productos, envolvías todo usando @extends:
+Blade
+
+@extends('layouts.app')
+
+@section('content')
+    <h1>Crear Nuevo Producto</h1>
+    <!-- Aquí metías el formulario de arriba -->
+@endsection
+
+@push('scripts')
+    <script>
+        console.log('Script exclusivo de la pantalla de creación de productos');
+    </script>
+@endpush
+
+3. Directivas de control que seguro extrañas en Vue
+
+Mientras que en Vue dependes de v-for o v-if directamente en las etiquetas HTML, en Blade el código queda muy limpio visualmente gracias a directivas como @forelse:
+Blade
+
+<div class="row">
+    {{-- @forelse combina un @foreach y un @if en una sola herramienta --}}
+    @forelse($products as $product)
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>{{ $product->name }}</h5>
+                    <p>Precio: ${{ number_format($product->price, 2) }}</p>
+                </div>
+            </div>
+        </div>
+    @empty
+        <div class="col-12">
+            <p class="alert alert-warning">No hay productos disponibles en el inventario educativo.</p>
+        </div>
+    @endforelse
+</div>
+
+Volver a ver código con los signos {!! !!} (para renderizar HTML sin escapar, que usaba Laravel Collective) y los tradicionales {{ }} es un gran golpe de nostalgia. ¿Qué parte del flujo del Ecommerce te gustaría desempolvar ahora? ¿El controlador con las validaciones de la época o la gestión del carrito usando sesiones de PHP de toda la vida?
+
+
+
+omposer update --no-audit
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 1 update, 0 removals
+  - Upgrading symfony/mime (v5.4.45 => v5.4.52)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 0 installs, 1 update, 0 removals
+  - Downloading symfony/mime (v5.4.52)
+  - Upgrading symfony/mime (v5.4.45 => v5.4.52): Extracting archive
+Package jakub-onderka/php-console-color is abandoned, you should avoid using it. Use php-parallel-lint/php-console-color instead.
+Package jakub-onderka/php-console-highlighter is abandoned, you should avoid using it. Use php-parallel-lint/php-console-highlighter instead.
+Package laravelcollective/html is abandoned, you should avoid using it. Use spatie/laravel-html instead.
+Package swiftmailer/swiftmailer is abandoned, you should avoid using it. Use symfony/mailer instead.
+Package symfony/debug is abandoned, you should avoid using it. Use symfony/error-handler instead.
+Package fzaninotto/faker is abandoned, you should avoid using it. No replacement was suggested.
+Package phpunit/php-token-stream is abandoned, you should avoid using it. No replacement was suggested.
+Generating optimized autoload files
+Carbon 1 is deprecated, see how to migrate to Carbon 2.
+https://carbon.nesbot.com/docs/#api-carbon-2
+    You can run './vendor/bin/upgrade-carbon' to get help in updating carbon and other frameworks and libraries that depend on it.
+> Illuminate\Foundation\ComposerScripts::postAutoloadDump
+> @php artisan package:discover
+Discovered Package: fideloper/proxy
+Discovered Package: laravel/tinker
+Discovered Package: laravelcollective/html
+Discovered Package: nunomaduro/collision
+Package manifest generated successfully.
+56 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+GitHub API limit (0 calls/hr) is exhausted, could not fetch https://api.github.com/graphql. Create a GitHub OAuth token to go over the API rate limit. You can also wait until 2026-05-23 23:06:57 for the rate limit to reset.
+
+When working with _public_ GitHub repositories only, head here to retrieve a token:
+https://github.com/settings/tokens/new?scopes=&description=Composer+on+msi+2026-05-23+2206
+This token will have read-only permission for public information only.
+When you need to access _private_ GitHub repositories as well, go to:
+https://github.com/settings/tokens/new?scopes=repo&description=Composer+on+msi+2026-05-23+2206
+Note that such tokens have broad read/write permissions on your behalf, even if not needed by Composer.
+Tokens will be stored in plain text in "/home/klvst3r/.config/composer/auth.json" for future use by Composer.
+For additional information, check https://getcomposer.org/doc/articles/authentication-for-private-packages.md#github-oauth
+Token (hidden):  
+No token given, aborting.
+You can also add it manually later by using "composer config --global --auth github-oauth.github.com <token>"
+
+In AuthHelper.php line 132:
+                                              
+  Could not authenticate against github.com   
+                                              
+
+update [--with WITH] [--prefer-source] [--prefer-dist] [--prefer-install PREFER-INSTALL] [--dry-run] [--dev] [--no-dev] [--lock] [--no-install] [--no-audit] [--audit-format AUDIT-FORMAT] [--no-autoloader] [--no-suggest] [--no-progress] 
+[-w|--with-dependencies] [-W|--with-all-dependencies] [-v|vv|vvv|--verbose] [-o|--optimize-autoloader] [-a|--classmap-authoritative] [--apcu-autoloader] [--apcu-autoloader-prefix APCU-AUTOLOADER-PREFIX] [--ignore-platform-req IGNORE-PLA
+TFORM-REQ] [--ignore-platform-reqs] [--prefer-stable] [--prefer-lowest] [-m|--minimal-changes] [--patch-only] [-i|--interactive] [--root-reqs] [--bump-after-update [BUMP-AFTER-UPDATE]] [--] [<packages>...]
+
+
+el clásico muro de la API de GitHub! Lo que pasó aquí es muy común cuando se trabaja con proyectos antiguos o se hacen muchas consultas seguidas en la misma red: Composer realiza peticiones anónimas a la API de GitHub para revisar metadatos de los paquetes, pero esa API tiene un límite muy estricto por hora (60 peticiones). Una vez que te lo acabas, te exige un token de acceso (PAT) para identificarte o te bloquea el comando, como te acaba de ocurrir.Lo bueno es que el proceso de actualización ya se completó y se guardó en tu archivo de bloqueo (Discovered Package: laravelcollective/html y Package manifest generated successfully se ejecutaron antes del bloqueo). El error ocurrió al final, cuando Composer intentó buscar información extra de "funding" (financiamiento) o metadatos de las 56 dependencias.Tienes dos opciones muy sencillas para resolver esto de raíz en tu máquina:Opción 1: La solución rápida (Generar un Token de GitHub)Dado que usas GitHub, crear un token personal clásico (read-only para datos públicos) te tomará un minuto y le dará a tu Composer un límite de 5,000 peticiones por hora, olvidándote de este error para siempre.1.Ir a los Ajustes de GitHub:Paso 1.Entra a tu cuenta de GitHub, ve a Settings (Configuración) -> Developer Settings -> Personal access tokens -> Tokens (classic).2.Generar un nuevo Token:Paso 2.Haz clic en Generate new token (classic). Ponle una descripción como "Composer local" y no marques ninguna casilla (scopes) si solo usas repositorios públicos. Al dejar los permisos vacíos, el token solo servirá para saltarse el límite de descargas de forma segura.3.Registrar el token en Composer:Paso 3.Copia el código que te dará GitHub (empieza por ghp_) y ejecútalo en tu terminal reemplazando <tu_token>:Bash
+
+
+Opción 1: El comando corregido paso a paso
+
+Si usas la bandera --auth, Composer espera que uses la clave genérica github-oauth seguida de tu token. Ejecuta el comando estructurado exactamente así:
+Bash
+
+composer config --global github-oauth.github.com ghp_TuTokenDeGitHubAqui
+
+(Nota: Asegúrate de reemplazar ghp_TuTokenDeGitHubAqui por el token real que copiaste de tu cuenta).
+Opción 2: Escribirlo directamente en el archivo auth.json
+
+A veces, para evitar pelearnos con la sintaxis de la consola o que el token quede guardado plano en el historial de comandos de tu terminal (fish o bash), es mucho más limpio meterlo directo en su archivo de configuración global.
+
+Como estás en Linux, el archivo se encuentra en tu directorio home. Puedes editarlo ejecutando:
+Bash
+
+nano ~/.config/composer/auth.json
+
+Si el archivo está vacío o no existe, pega esta estructura con tu token; si ya tiene contenido, solo añade la sección "github-oauth" dentro de las llaves principales:
+JSON
+
+{
+    "github-oauth": {
+        "github-oauth.github.com": "ghp_TuTokenDeGitHubAqui"
+    }
+}
+
+Guardas los cambios (Ctrl + O, luego Enter y Ctrl + X para salir de nano) y listo. La próxima vez que lances un comando de Composer, leerá las credenciales automáticamente de ahí y no te volverá a saltar el límite de peticiones de la API.
+
+
+continuamos.
+
+
+
+Temrinando vamos a integrarlo con ncnuestro proyecto
+
+Archivo config/app.php
+
+Buscamos la seccion providers
+
+Buscamos la seccion providers
+
+Busca en el archivo config/app.php la siguiente linea
+
+'Collective\Html\HtmlServiceProvider::class', (es la unica que empieza con Collective) la borramos y agregamos la siguiente:  
+
+\Collective\Html\HtmlServiceProvider::class,    
+
+Agregamos los sevicios a nuestra aplicacion cuando realicemos una peticion a nuestro servidor.
+
+Y en los aliases agregamos 
+
+'Form' => Collective\Html\FormFacade::class,
+'Html' => Collective\Html\HtmlFacade::class,
+
+Para comprobar que se ha instalado correctamente, en cualquier parte de nuestro proyecto podemos agregar los siguientes codigos:
+
+{{ Form::open(['route' => 'login', 'method' => 'POST']) }}
+{{ Form::close() }}
+
+{{ Html::link('login', 'Iniciar Sesión') }}
+
+Para comprobar que los servicios estan importando correctamente
+
+
+Ahora nos pwermite utilizar algunas de los metodos de las vistas que vienen que vienen Laravel Collective con form y html
+
+en las vistas de rpoducvts creamos algo nuevos.
+
+creamos un archivo
+resources/views/products/form.blade.php
+
+para los formularios que vamos a crear
+
+empezamos
+
+{{ Form::open(['url' => '/productos', 'method' => 'POST']) }}
+
+{{ Form::close() }}
+
+y ahora en la vista create en el card body
+
+<div class="card-body">
+                        <!-- Aquí irá el formulario más adelante -->
+                        <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+
+                        <!-- Incluimos la vista parcial 'products.form' para crear un nuevo producto -->
+                        @include('products.form')    
+                    </div>
+
+y ahora en la ruta:
+
+http://localhost:8000/products/create
+
+no nos puestra naa pero inspeccinando el codigo revisamos y tenemos en el card body:
+
+<p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+
+<div class="card-body">
+    <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p> 
+                            
+    <form method="POST" action="http://localhost:8000/productos" accept-charset="UTF-8">
+        <input name="_token" type="hidden" value="iqNmG2qbm2nCOsHiwdnwsOlEuP7tsivUhcshQbyi">
+    </form>
+</div>                            
+    
+Si no recordamos nuestro usuario podremos recurrir a Tinker:
+
+php artisan tinker
+
+>>> User::all();
+=> Illuminate\Database\Eloquent\Collection {#4228
+     all: [
+       App\User {#4229
+         id: 1,
+         name: "Klvst3r",
+         email: "klvst3r@ecommerce.com",
+         age: null,
+         created_at: "2026-05-18 04:42:56",
+         updated_at: "2026-05-18 04:42:56",
+       },
+     ],
+   }
+
+                            
+Vamos a cambiar la llave por dobles signos de admiracion 
+
+
+{!! Form::open(['url' => '/productos', 'method' => 'POST']) !!}
+
+{!! Form::close() !!}
+
+
+Indicando que se debe imprimir html
+Par ano usar impresiones de Blade
+
+
+<div class="card-body"><p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p> <form method="POST" action="http://localhost:8000/productos" accept-charset="UTF-8">
+                            <input name="_token" type="hidden" value="iqNmG2qbm2nCOsHiwdnwsOlEuP7tsivUhcshQbyi"></form></div>
+
+
+Creamos el formulario en el archivo form.blade.php
+
+
+{!! Form::open(['url' => '/productos', 'method' => 'POST']) !!}
+<div>
+    {!! Form::label('title', 'Nombre del producto') !!}
+    {!! Form::text('title','', ['class' => 'form-control']) !!}
+</div>
+
+{!! Form::close() !!}
+
+aun no se ha creado la tabla de productos para alamacenarloss valores desde el formulario, tampoco tenemos el controlador, pero ahi vamos previniendo.
+
+Nuestro formulario completo:
+
+
+{!! Form::open(['url' => '/productos', 'files' => 'app-form', 'method' => 'POST']) !!}
+<div>
+    {!! Form::label('title', 'Nombre del producto') !!}
+    {!! Form::text('title','', ['class' => 'form-control']) !!}
+</div><br>
+<div>
+    {!! Form::label('description', 'Descripción del producto') !!}
+    {!! Form::textarea('description','', ['class' => 'form-control']) !!}
+</div><br>
+<div>
+    {!! Form::label('price', 'Precio del producto') !!}
+    {!! Form::text('price', 0, ['class' => 'form-control']) !!}
+</div><br>
+<div class="">
+<input type="submit" value="Guardar" class="btn btn-primary">
+</div>
+
+{{-- {!! Form::submit('Guardar') !!} --}}
+{!! Form::close() !!}
+
