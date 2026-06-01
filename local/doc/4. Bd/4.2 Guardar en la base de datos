@@ -1,0 +1,192 @@
+Para guardar información utilizamos el metodo stor, podremos hace ruso de 
+
+var_dump($request);
+
+Para ver que se esta enviando.
+
+En el metodo store se utiliza el metodo fillable para indicar que campos se pueden guardar en la base de datos.
+
+En el metodo store se utiliza el metodo save para guardar la información en la base de datos.
+
+En el metodo store se utiliza el metodo redirect para redireccionar a la pagina principal.
+
+En el metodo store se utiliza el metodo back para redireccionar a la pagina anterior.
+
+En el metodo store se utiliza el metodo with para enviar información a la pagina principal.
+
+En el metodo store se utiliza el metodo withInput para enviar información a la pagina anterior.
+
+
+Lo primero es verificar la rua:
+
+Route::resource('products', 'ProductController')->middleware('auth');
+
+
+luego tenemos una complicacion con Laravel Colective, por lo que vamos a emplear HTML para el formulario:
+
+<form action="/products" method="POST">
+    @csrf
+    <div class="form-group mb-3">
+        <label for="title">Nombre del producto</label>
+        <input type="text" name="title" class="form-control" id="title">
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="description">Descripción</label>
+        <textarea name="description" class="form-control" rows="4" id="description"></textarea>
+    </div>
+
+    <div class="form-group mb-4">
+        <label for="price">Precio</label>
+        <input type="text" name="price" class="form-control" id="price">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Producto</button>
+</form>
+
+
+Incluimos el formulario en la vista create;
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card padding">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Crear nuevo producto</h4>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Aquí irá el formulario más adelante -->
+                        <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+
+                        <!-- Incluimos la vista parcial 'products.form' para crear un nuevo producto -->
+                        @include('products.form')    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+
+
+y finalemnte definimos el metodo store en el controlador:
+
+ public function store(Request $request)
+    {
+        //dd($request->all());
+        // 1. Validar que los datos cumplan con lo requerido
+        $validatedData = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'price'       => 'required|numeric|min:0',
+        ]);
+
+        // 2. Guardar el producto en la base de datos usando el Modelo
+        // Como image_url no viene en el formulario, tomará el 'null' por defecto del modelo
+        Product::create($validatedData);
+
+        // 3. Redireccionamos al índice de productos
+        return redirect()->route('products.index')->with('status', '¡Producto creado con éxito!');
+    }
+
+Esto nos va a redirigir hacia index, pero al no tenerlo definido creamos nuestra vista de Index:
+
+public function index()
+    {
+        // Consultamos todos los productos de la base de datos de forma paginada (por ejemplo, 10 por página)
+        // O si prefieres traer todos de golpe: $products = Product::all();
+        $products = Product::paginate(10);
+
+        // Retornamos la vista pasándole la colección de productos
+        return view('products.index', compact('products'));
+    }
+
+y la vista de Index:
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+
+                {{-- Mensaje de éxito si venimos de guardar un producto --}}
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Listado de Productos</h4>
+                        {{-- Botón para ir a crear un nuevo producto --}}
+                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
+                            Crear nuevo producto
+                        </a>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="ps-4">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col" class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $item)
+                                        <tr>
+                                            <th scope="row" class="ps-4 align-middle">{{ $item->id }}</th>
+                                            <td class="align-middle fw-bold">{{ $item->title }}</td>
+                                            {{-- <td class="align-middle text-muted">{{ Str::limit($item->description, 60) }} --}}
+                                            <td class="align-middle text-muted">
+                                                {{ \Illuminate\Support\Str::limit($item->description, 60) }}</td>
+                                            </td>
+                                            <td class="align-middle">${{ number_format($item->price, 2) }}</td>
+                                            <td class="text-end pe-4 align-middle">
+                                                {{-- Botones de acción (Editar / Ver) --}}
+                                                <a href="{{ route('products.edit', $item->id) }}"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    Editar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                No hay productos registrados en este momento.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {{-- Enlaces de paginación (si usas Product::paginate) --}}
+                    @if ($products->hasPages())
+                        <div class="card-footer bg-white d-flex justify-content-center">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+
+PAra cerrar el ciclo de inserción, almacenamiento y visualización de datos en Laravel, necesitamos crear un formulario para ingresar nuevos productos y una función para guardarlos en la base de datos. Aquí hay un ejemplo de cómo podrías hacerlo:
+
+

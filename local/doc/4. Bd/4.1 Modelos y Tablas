@@ -64,7 +64,7 @@ El modelo se escribe en singular y la migracion en plural.
 
 Es importante que tengan nombres en ingles a distinguir el plural del modelo, como recomendación.
 
-en el modelo es importante el atributo fillable que debe contener un arreglo con todos los campos de la tabla que se pupeden asignar en masa, estos atributos se espera que modifiquemos en el flujo de nuesra aplicaciń.
+en el modelo es importante el atributo fillable que debe contener un arreglo con todos los campos de la tabla que se pupeden asignar en masa, estos atributos se espera que modifiquemos en el flujo de nuesra aplicación.
 
 Estos se modificaran via formulario.
 

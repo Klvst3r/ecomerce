@@ -15,7 +15,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        // Consultamos todos los productos de la base de datos de forma paginada (por ejemplo, 10 por página)
+        // O si prefieres traer todos de golpe: $products = Product::all();
+        $products = Product::paginate(10);
+
+        // Retornamos la vista pasándole la colección de productos
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -39,7 +44,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        // 1. Validar que los datos cumplan con lo requerido
+        $validatedData = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'price'       => 'required|numeric|min:0',
+        ]);
+
+        // 2. Guardar el producto en la base de datos usando el Modelo
+        // Como image_url no viene en el formulario, tomará el 'null' por defecto del modelo
+        Product::create($validatedData);
+
+        // 3. Redireccionamos al índice de productos
+        return redirect()->route('products.index')->with('status', '¡Producto creado con éxito!');
     }
 
     /**
@@ -65,23 +83,22 @@ class ProductController extends Controller
 
         // return view('products.edit', compact('product'));
         //  return view('products.edit', ["product" => $product]);
-     
+
         // return view('products.form', ["product" => $product]);
 
         // La clave de la izquierda DEBE ser 'product' en singular
         // 1. Inyecta esto aquí temporalmente:
-    //dd($id, $product);
+        //dd($id, $product);
 
-    //return view('products.edit', ['product' => $product]);
+        //return view('products.edit', ['product' => $product]);
 
 
-    
-    // findOrFail asegura que regrese una instancia del Modelo Product (un objeto limpio)
-    // y no un constructor de consultas (Query Builder).
-    $product = Product::findOrFail($id);
 
-    return view('products.edit', compact('product'));
+        // findOrFail asegura que regrese una instancia del Modelo Product (un objeto limpio)
+        // y no un constructor de consultas (Query Builder).
+        $product = Product::findOrFail($id);
 
+        return view('products.edit', compact('product'));
     }
 
     /**
