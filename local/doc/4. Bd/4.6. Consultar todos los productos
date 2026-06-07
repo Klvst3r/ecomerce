@@ -1,0 +1,173 @@
+Pra visualizarse todos los productos.
+
+Para la visualización de los productos es productos, esa peticion debe enviarse al servidor.
+
+Con el metodo get, para crearlo es el metodo post, es algo que define rest via verbos http, y no por las direcciones.
+
+Cuando hacemos una peticion get, vamos hacia el metodo index.
+
+Ontener l información debemos tomar nuestro modelo y hacer all, para mostrar todos los productos en la tabla.
+
+
+Metodo index del controlador.
+ public function index()
+    {
+        // Consultamos todos los productos de la base de datos de forma paginada (por ejemplo, 10 por página)
+        // O si prefieres traer todos de golpe: $products = Product::all();
+        $products = Product::paginate(10);
+
+        // Retornamos la vista pasándole la colección de productos
+        return view('products.index', compact('products'));
+    }
+
+
+Retornamos una vista con el arreglo de productos.
+
+En la vista, vamos a mostrar los productos en una tabla, y para ello vamos a utilizar un bucle foreach para iterar sobre la colección de productos y mostrar cada uno de ellos en una fila de la tabla.
+
+En la vista, vamos a utilizar un bucle foreach para iterar sobre la colección de productos y mostrar cada uno de ellos en una fila de la tabla.
+
+En la vista, vamos a utilizar un bucle foreach para iterar sobre la colección de productos y mostrar cada uno de ellos en una fila de la tabla.
+
+Para ello tenemos la vista index.blade.php
+
+para extender el layout con la sección, content, dentro mostramos todos nuestros productos, con la navegación.
+
+Para recorrer el arreglo de prpoductos, vamos a utilizar la instruccion foreach, pasando la coleccion de productos y luego cada uno de los elementos que se encuentra en la iteracion, mostrando los elementos de cada uno de los productos.
+
+La información lo vamos a desplegar en una tabla donde coloquemos el contenido de la tabla y una columna de acciones.
+
+Tenemos nuestra plantilla de tabla utilizando bootstrap y debajo la funcoinalidad js para la ocultación del mensaje en caso de exito de creación o edicion de productos.
+
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+
+                {{-- Mensaje de éxito si venimos de guardar un producto --}}
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Listado de Productos</h4>
+                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
+                            Crear nuevo producto
+                        </a>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="ps-4">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col" class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $item)
+                                        <tr>
+                                            <th scope="row" class="ps-4 align-middle">{{ $item->id }}</th>
+                                            <td class="align-middle fw-bold">{{ $item->title }}</td>
+                                            <td class="align-middle text-muted">
+                                                {{ \Illuminate\Support\Str::limit($item->description, 60) }}
+                                            </td>
+                                            <td class="align-middle">${{ number_format($item->price, 2) }}</td>
+                                            <td class="text-end pe-4 align-middle">
+                                                <a href="{{ route('products.edit', $item->id) }}"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    Editar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                No hay productos registrados en este momento.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if ($products->hasPages())
+                        <div class="card-footer bg-white d-flex justify-content-center">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 
+        Colocamos el script AQUÍ dentro de 'content' y corregimos el cierre del setTimeout.
+        Al estar aquí, se cargará sí o sí junto con la vista.
+    --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var alert = document.getElementById('success-alert');
+            if (alert) {
+                setTimeout(function() {
+                    // Quitamos la clase 'show' para iniciar la transición de Bootstrap
+                    alert.classList.remove('show');
+
+                    // Esperamos 500ms a que termine el fadeout antes de removerlo del DOM por completo
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 4000); // 4 segundos de espera
+            }
+        });
+    </script>
+@endsection
+
+
+
+En lugar de tener una tabla podremos tener unas tarjetas para cada producto pero nos saturaemos de tantas tarjetasm por eso la tabla es una forma eficiente de optimizar recursos.
+
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+
+                {{-- Mensaje de éxito si venimos de guardar un producto --}}
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                 <div class="card shadow-sm">
+                    <div class="card padding">
+                        <header>
+                            <h2 class="card-tittle">{{ $product->title }}</h2>
+                            <h4 class="card-subtitle">{{ $product->price }}</h4>
+                        </header>
+                        <p class="card-text">{{ $product->description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection    
+                    </div>
