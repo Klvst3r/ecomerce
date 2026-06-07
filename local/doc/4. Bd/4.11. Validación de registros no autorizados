@@ -1,0 +1,215 @@
+En el contralador de autorización
+
+RegisterController 
+
+
+Tioene varias funciones como la de creación y mostrar la vista con la que nos regitramos
+
+Si nosotros vamos ANCHOR - 
+http://localhost:8000/register
+
+temndremos nuestro formulario de registro.
+
+En el formulario de registro tenemos un formulario de registro que tiene un método post que llama a la función store del controlador de registro.
+
+En la función store del controlador de registro, tenemos una validación de los datos del formulario de registro.
+
+Si los datos del formulario de registro son válidos, se creará un nuevo usuario y se redirigirá a la página de inicio de sesión.
+
+Si los datos del formulario de registro no son válidos, se mostrará un mensaje de error y se volverá a mostrar el formulario de registro con los datos que se han introducido.
+
+pero tenemos dentro de este controlador un metodo guess
+
+ public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+
+Es aplicado significa que si ya tenemos una sesion inicado ya no podremos ir hacia la dirección indicada siempre y cuando ya estemos dentro del sistema
+
+Vamos acrear un nuevo middleware para modificar el comportamiento 
+
+y haciendo uso de artisdan creamos nuestro middleware
+
+
+php artisan make:middleware ValidateFirstUserSignUp
+
+
+
+Ahora ya tenemos nuestro middleware que tiene una fucnion que se ejeuta cuando tenbemos nuestro middleware}
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+
+class ValidateFirstUserSignUp
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
+        return $next($request);
+    }
+}
+
+
+Entoncves so significa  que debo llamar a next cuando odo salio mal y no una respuesta como un redireccioameinto.
+
+Debemos indicar que debemos utilizar el modelo de users para poder hacer consultas y proceder a ocntar la cantidad de usuario que tengos registrados con el metodo count.
+
+Esto me servira si pyo por ejemplo si el conteo es mayor a cero sabemos que por lo menos tenemos un usuario.
+
+l primero registrarse si no tenemos sesion, y los demas seran mediante un suasurio registrado previamente 
+
+upongamos que ya hay un usuario creado.
+
+Para saber si un susario hay en la bd, utilizamos la clase auth dentro del namespace auth tiene un metodocheck si ya hay un usuaio inicado con esta sesió, si hay mas de un usuario en la bd y esta logieado, lo redireccionaremos al home, para que no pueda registrar mas usuarios.
+
+
+public function handle($request, Closure $next)
+    {
+        //contamos la cantidad de usuariuos registrados en la base de datos
+        $userCount = User::count();
+
+        //Si el coneo es > 0 hay almenos un usuario
+        if ($userCount > 0 && !Auth::check()) {
+            // Si ya hay usuarios registrados, redirigimos a la página de inicio de sesión
+            //return redirect()->route('login')->with('status', 'Ya existe un usuario registrado. Por favor, inicia sesión.');
+            // Redirigimos al home para que no pueda ver el registro
+            return redirect('/')->with('status', 'Ya existe un usuario registrado. Por favor, inicia sesión.');
+        }
+
+        return $next($request);
+    }
+
+
+
+Para poder utilziar el middleware debemos registrarlo en el kjernel
+
+Kerne.php
+
+ protected $routeMiddleware = [
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'first.user' => \App\Http\Middleware\ValidateFirstUserSignUp::class,
+    ];
+
+Colocamos coo nosmbre first.user y utilizamos el middleware que creamos anteriormente.
+
+Despues en Register controller modificamos el metodo al que invocamos.
+
+  public function __construct()
+    {
+        $this->middleware('first.user');
+    }
+
+Cerramos sesion y vamos a redirigirnos al registro, no debera permitir ingresar al registro pero si ingresamos desde la cuenta creada y vamos al registro, podra hacerlo para crear una nueva cuenta.
+
+
+Entonces para poder agregar usuario desde el dashboard vamos a gragrlo en las pciones del usuario
+
+
+
+
+
+Para ello en nuestro app.blade.php en la seccion de layout modificamos lo siguiente:
+
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Authentication Links -->
+    @guest
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+        </li>
+        {{-- 
+          Opcional: Si ya hay usuarios registrados, ocultamos también el botón 
+          "Register" de la barra superior para usuarios anónimos 
+        --}}
+        @if(\App\User::count() == 0)
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+            </li>
+        @endif
+    @else
+        <li class="nav-item dropdown">
+            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                {{ Auth::user()->name }} <span class="caret"></span>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                {{-- NUEVO: Opción para registrar un nuevo usuario disponible desde el Dashboard --}}
+                <a class="dropdown-item" href="{{ route('register') }}">
+                    <i class="bi bi-person-plus-fill mr-1 text-primary"></i> Registrar Usuario
+                </a>
+                
+                {{-- Divisor estético de Bootstrap --}}
+                <div class="dropdown-divider"></div>
+
+                {{-- Botón de Logout original --}}
+                <a class="dropdown-item" href="{{ route('logout') }}"
+                   onclick="event.preventDefault();
+                                 document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
+                </a>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
+        </li>
+    @endguest
+</ul>
+
+para que pueda el usuario registrado agregar mas usuarios.
+
+¿Cómo operará el sistema ahora bajo este flujo?
+
+Analicemos los tres escenarios posibles gracias a tu nuevo middleware first.user:
+
+    Escenario A: Base de datos limpia (Instalación nueva).
+    Un visitante entra a http://localhost:8000/register. El middleware cuenta los usuarios ($userCount = 0). Como el conteo no es mayor a cero, el middleware dice “adelante” ejecutando return $next($request);. El usuario se registra con éxito.
+
+    Escenario B: Usuario anónimo intenta registrarse (Modo intruso).
+    Un usuario ajeno intenta forzar la URL http://localhost:8000/register sin estar logueado. El middleware detecta que $userCount > 0 (ya existe el administrador) y que !Auth::check() (no ha iniciado sesión). El condicional lo atrapa y lo rebota de inmediato a la raíz / con un mensaje flash de advertencia.
+
+    Escenario C: El administrador da de alta a un colaborador.
+    Tú inicias sesión, despliegas el menú superior derecho junto a tu nombre y das clic en "Registrar Usuario". Como estás logueado, !Auth::check() es falso (porque sí estás autenticado), lo que significa que el condicional del middleware se salta por completo y te permite ver y procesar el formulario de registro de manera impecable.
+
+Con este cambio, has convertido el sistema de autenticación básico de Laravel en un entorno de administración cerrado, seguro y perfectamente controlado para tu eCommerce.
+
+---------------
+
+php artisan make:middleware CheckIfNotAuthenticated
+
+y dentro de este middleware vamos a crear la función handle
+
+public function handle($request, Closure $next, ...$guards)
+    {
+        $guards = empty($guards) ? [null] : $guards;
+
+        foreach ($guards as $guard) {
+            if (auth($guard)->check()) {
+                return redirect('/home');
+            }
+
+
+
+El unico inconveniente que podria surgir es que i registramos un nuevo usuario o una nueva cuenta y aceoptamos el sistema cambiara hacia esa nueva cuenta creada.
+
+Es una proteeccion rapida, para impedir cualquiera que no este autenticado pueda acceder a la pagina de registro.
+
+Solo usuario sautenticados.
+

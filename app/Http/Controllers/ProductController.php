@@ -8,6 +8,21 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+    /**
+     * Mediante el constructor de la clase debemos especificar el middleware nos ayudaran a proteger nuestrar rutas.
+     * Con esto cualquiera de las acciones a realizar van a pasar primero por el middleware.
+     *
+     * @return  [type]  [return description]
+     */
+
+    public function __construct()
+    {
+        // Aplicamos el middleware de autenticación a todas las rutas de este controlador
+        //Exceptuamos el index y el show para que puedan ser accedidos por usuarios no autenticados
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -102,6 +117,27 @@ class ProductController extends Controller
 
         return view('products.edit', compact('product'));
     }
+
+    //Actualizxacion en la bd
+    public function update(Request $request, $id)
+    {
+        //Actualizar el recurso especifico
+        $product = Product::findOrFail($id);
+        $product->title = $request->input('title');
+        $product->description = $request->input('description');
+        $product->price = $request->input('price');
+
+        //Para guardar estos cambios en la bd
+        if ($product->save()) {
+            //redirecciona hacia home
+            return redirect()->route('products.index')->with('status', '¡Producto actualizado con éxito!');
+        } else {
+            //regresa al formulario con mensaje de error.
+            return back()->withErrors('Error al actualizar el producto. Por favor, inténtalo de nuevo.');
+        }
+    }
+
+
 
     /**
      * Update the specified resource in storage.
