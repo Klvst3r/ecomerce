@@ -120,6 +120,12 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Eliminar un recurso de la base de datos
+        // $product = Product::findOrFail($id);
+        // $product->delete();
+        Product::destroy($id);
+
+        // Redireccionamos al índice de productos con un mensaje de éxito
+        return redirect()->route('products.index')->with('status', '¡Producto eliminado con éxito!');
     }
 }

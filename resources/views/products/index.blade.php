@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
 
-                {{-- Mensaje de éxito si venimos de guardar un producto --}}
+                {{-- Mensaje flash que aparecerá al eliminar y se borrará solo --}}
                 @if (session('status'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                         {{ session('status') }}
@@ -43,17 +43,32 @@
                                             </td>
                                             <td class="align-middle">${{ number_format($item->price, 2) }}</td>
                                             <td class="text-end pe-4 align-middle">
-                                                {{-- Botón para Ver Detalle --}}
-                                                {{-- Botón para Ver Detalle --}}
-                                                <a href="{{ route('products.show', $item->id) }}"
-                                                    class="btn btn-sm btn-outline-info me-1">
-                                                    Ver
-                                                </a>
-                                                {{-- Botón para Editar (mantenemos el tuyo con un margen) --}}
-                                                <a href="{{ route('products.edit', $item->id) }}"
-                                                    class="btn btn-sm btn-outline-secondary">
-                                                    Editar
-                                                </a>
+                                                <div class="d-flex justify-content-end align-items-center">
+                                                    {{-- Botón Ver --}}
+                                                    <a href="{{ route('products.show', $item->id) }}"
+                                                        class="btn btn-sm btn-outline-info me-1">
+                                                        Ver
+                                                    </a>
+
+                                                    @auth
+                                                        {{-- Botón Editar --}}
+                                                        <a href="{{ route('products.edit', $item->id) }}"
+                                                            class="btn btn-sm btn-outline-secondary me-1">
+                                                            Editar
+                                                        </a>
+
+                                                        {{-- Formulario Inline con Confirmación JS --}}
+                                                        <form action="{{ route('products.destroy', $item->id) }}" method="POST"
+                                                            class="d-inline mb-0"
+                                                            onsubmit="return confirm('¿Estás seguro de que quieres eliminar el producto &quot;{{ $item->title }}&quot;?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                Eliminar
+                                                            </button>
+                                                        </form>
+                                                    @endauth
+                                                </div>
                                             </td>
                                         </tr>
                                     @empty
@@ -69,7 +84,8 @@
                     </div>
 
                     @if ($products->hasPages())
-                        <div class="card-footer bg-white d-flex justify-content-center">
+                        <div class="card-footer bg-white d-flex justify-content-end py-3"
+                            style="margin-top: 1em; margin-bottom: 1em;">
                             {{ $products->links() }}
                         </div>
                     @endif
@@ -79,23 +95,20 @@
         </div>
     </div>
 
-    {{-- 
-        Colocamos el script AQUÍ dentro de 'content' y corregimos el cierre del setTimeout.
-        Al estar aquí, se cargará sí o sí junto con la vista.
-    --}}
+    {{-- Script encargado del desvanecimiento automático --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var alert = document.getElementById('success-alert');
             if (alert) {
                 setTimeout(function() {
-                    // Quitamos la clase 'show' para iniciar la transición de Bootstrap
+                    // Quita la clase de Bootstrap para iniciar la animación visual
                     alert.classList.remove('show');
 
-                    // Esperamos 500ms a que termine el fadeout antes de removerlo del DOM por completo
+                    // Espera a que termine la animación y limpia el espacio del DOM por completo
                     setTimeout(function() {
                         alert.remove();
                     }, 500);
-                }, 4000); // 4 segundos de espera
+                }, 4000); // Se muestra durante 4 segundos
             }
         });
     </script>
