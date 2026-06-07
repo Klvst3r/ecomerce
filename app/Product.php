@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    
+
     protected $fillable = [
         'title',
         'price',
@@ -14,8 +14,14 @@ class Product extends Model
         'image_url',
     ];
 
-    public function url(){
-       return $this->id ? 'products.update' : 'products.store';
+    public function url()
+    {
+        return $this->id ? 'products.update' : 'products.store';
+    }
+
+    public function method()
+    {
+        return $this->id ? 'PUT' : 'POST';
     }
 
     protected $attributes = [

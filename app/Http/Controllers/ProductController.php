@@ -110,7 +110,20 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //Actualizar el recurso especifico
+        $product = Product::findOrFail($id);
+        $product->title = $request->input('title');
+        $product->description = $request->input('description');
+        $product->price = $request->input('price');
+
+        //Para guardar estos cambios en la bd
+        if ($product->save()) {
+            //redirecciona hacia home
+            return redirect()->route('products.index')->with('status', '¡Producto actualizado con éxito!');
+        } else {
+            //regresa al formulario con mensaje de error.
+            return back()->withErrors('Error al actualizar el producto. Por favor, inténtalo de nuevo.');
+        }
     }
 
     /**

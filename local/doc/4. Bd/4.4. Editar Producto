@@ -1,0 +1,125 @@
+Cuando necesitemos aditar valores de la BD, debemos indicar esa acción desde el controlador y la forma de hacelor es mediante el metodo edit. que lo que hace es recibir un parametro del identificador del registro a editar y hacer una consulta a la bd.
+
+Para mantener esos valores en un objeto, mismo que sera renderizado para su edición o actualización. 
+
+ public function edit($id)
+    {
+        $product = Product::findOrFail($id);
+
+        return view('products.edit', compact('product'));
+    }
+
+El segundo paso es enviar ese objeto renderizandolo hacia una vista, para ello utilizamos el rturn view:
+
+El primer parametro nos indica la ruta a renderizar y el segundo paramtro nos permite enviar variables a esa vista, en este caso el objeto product.
+
+return view('products.edit', compact('product'));
+
+Ahora dentro de la vista podemos replicar el formulario de creación de productos, pero con la diferencia que en vez de hacer un post, haremos un put o patch, dependiendo de si el registro existe o no.
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card padding">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Editar producto</h4>
+                        <p>{{ $product->title }}</p>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Aquí irá el formulario más adelante -->
+                        <p class="text-muted">El contenedor de la vista se está renderizando correctamente debajo del menú de
+                            navegación.</p>
+
+                        <!-- Incluimos la vista parcial 'products.form' para crear un nuevo producto -->
+                        @include('products.form')    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+
+
+Podemos percatarnos que hacemos el include del formulario por lo que trabajaremos en el formulario para incrustar los valors del objeto recibido en la vista 
+del objeto $product.
+
+en el formulario al estar utlizando html nativo lo incrustamos no como paramtro, sino como variable de entorno, por lo que en el formulario tenemos que hacer uso de la variable de entorno $product. dentro de la etiqueta value
+
+ <input type="text" value="{{ $product->title ?? '' }}" name="title" class="form-control" id="title">
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="description">Descripción</label>
+        <textarea name="description" class="form-control" rows="4" id="description">{{ $product->description ?? '' }}</textarea>
+    </div>
+
+    <div class="form-group mb-4">
+        <label for="price">Precio</label>
+        <input type="text" value="{{ $product->price ?? '' }}" name="price" class="form-control" id="price">
+    </div>
+
+
+Para enviar los valores con el metodo create el metodo de envio de valorres es POST, pero para la edicion el metodo de envio es PUT/PATCH.
+
+
+Para ello revisando el modelo, de Product.
+
+Debemos definir ahi dos metodos.
+
+Uno que se llame url que me enviara hacia donde tengo que enviar la petición,
+
+POara saber el objeto si ya se guardo en la bd, que tiene un id, y dos que queremos actualizarlo.
+
+Para ello decimos quesi el id existe, la dirección sera products.update o si no existe products.store.
+
+
+  public function url(){
+       return $this->id ? 'products.update' : 'products.store';
+    }
+
+
+El otro metodo sera methos que precismanete indicara que metodos es el que entrara en acciópn.
+
+  public function method(){
+        return $this->id ? 'PUT' : 'POST';
+    }
+
+
+Si existe al id ya esta en la bd, ahora en el formulario debemos cambiar el metodo a PUT y el action a products.update
+
+Es importante que en el formulario indiquemos que metodo estaremos utilizando, ya sea que para creación tengamos el metodo POST y para editar el metodo PUT,, aunque en la url siempre vamos a poner el metodo POST, debemo inyectar el metodo dentro del formualrio de la siguiemnte manera:
+
+<form action="{{ $product->id ? route($product->url(), $product->id) : route($product->url()) }}" method="POST">
+
+    {{-- Token de seguridad obligatorio --}}
+    @csrf
+
+    {{-- Inyectamos el método oculto dinámicamente usando tu función del modelo --}}
+    @if ($product->id)
+        <input type="hidden" name="_method" value="{{ $product->method() }}">
+    @endif
+    demas etiquetas del formulario...
+
+</form>
+
+
+
+La razon por lq eu se concerva post y se garega un campo put, es por que la mayoria d elos navegadores no soportan, peticones htts como verbos put o delete, entonces por eso debemos inyectar un campo con un metodo, asi cuando llegue la preticion al servidor laravel sepa que metodo debe procesar, aunque el navegador no sepa como hacer esas peticiones.
+
+
+
+
+Para que en la vista tengamos el renderizado de la siguiente manera.
+
+<form action="http://localhost:8000/products/1" method="POST"><input type="hidden" name="_token" value="TlVKb1WvDvYXKLt2eYPtPAGrLBZMEfCE3AKyNthY"> <input type="hidden" name="_method" value="PUT"> <div class="form-group mb-3"><label for="title">Nombre del producto</label> <input type="text" value="Producto de Prueba Legacy" name="title" id="title" class="form-control"></div> <div class="form-group mb-3"><label for="description">Descripción</label> <textarea name="description" rows="4" id="description" class="form-control">Creado desde Tinker</textarea></div> <div class="form-group mb-4"><label for="price">Precio</label> <input type="text" value="19.99" name="price" id="price" class="form-control"></div> <button type="submit" class="btn btn-primary">
+        Actualizar Producto
+    </button></form>
+
+
+Ahora dentro del controlador debemos trabajar con nuestro metodo de actualilzar
+
