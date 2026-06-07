@@ -43,6 +43,13 @@
                                             </td>
                                             <td class="align-middle">${{ number_format($item->price, 2) }}</td>
                                             <td class="text-end pe-4 align-middle">
+                                                {{-- Botón para Ver Detalle --}}
+                                                {{-- Botón para Ver Detalle --}}
+                                                <a href="{{ route('products.show', $item->id) }}"
+                                                    class="btn btn-sm btn-outline-info me-1">
+                                                    Ver
+                                                </a>
+                                                {{-- Botón para Editar (mantenemos el tuyo con un margen) --}}
                                                 <a href="{{ route('products.edit', $item->id) }}"
                                                     class="btn btn-sm btn-outline-secondary">
                                                     Editar

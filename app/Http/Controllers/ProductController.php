@@ -68,7 +68,9 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        //Muestra el recurso indiividualmente
+        $product = Product::findOrFail($id);
+        return view('products.show', compact('product'));
     }
 
     /**
