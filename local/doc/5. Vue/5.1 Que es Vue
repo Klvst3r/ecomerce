@@ -1,0 +1,26 @@
+Que es Vue
+
+Las aplicaciones web actuales difieren mucho de las que hace tiepo se construian hace 5 o 10 años.
+
+Sobre todo por que hoy dia utilizan JS inensamente, Js es muy util por que a traves de esta tecnologia, podemos cosntruir paginas web dinamicas y sobre todo interactiva.
+
+Podemos interactura información confirme el usuario usa la aplicación o los datos requieran ser actualizados, podemos integrar animaciones.
+
+Todos estos beneficios es que gran parte de la logica y funcionamiento de una aplicacion se han movido del servidor hacia el cliente con JS, tomando gran parte de las tareas que le correpondian al lenguaje del servidor para el front end.
+
+Se esta tecnologia han nacido decenas de tecnologias que ayudan a construir aplicaciones web con el cliente, una de ellas es Vue.
+
+Vue es el segundo Framework de JS mas popular en Github, despues de React.
+
+Vue fue publicado hace algunos años, el framework es especialmente popular en Laravel por que viene integrado por defecto hace varias versiones.
+
+Las principales versiones del Framework es que es accesible, que si sabes html, CSS y Js, es facil su aprendizaje.
+
+Es versatil por lo que podemos clasificarlo como una libraria o un framework por que se adapta a ambas situaciones y es de rendicmiento optimo, ademas de que el framework es muy ligeros por lo que no impacta en nuestro desarrollo web.
+
+Vue es un framework progresivo, lo que se hace la caaarcteristica mas interesante,  que a difefencia de Angular no tienes que reacer todos tu proyecto para integrar esta tecnologia. Vue puede abarcar una pequeña parte de la aplicacióin o todo lo del proyecto en una Single Page Application SPA. 
+
+Se usara Vue para partes cvlave, en el proyeccto que reclame mas interactividad, y de datos sincronizados, en la vista, añadiremos animaciones, y de datos sincronizados en la vista.
+
+consultas asincronzas a la bd con AJAX y mas.
+
