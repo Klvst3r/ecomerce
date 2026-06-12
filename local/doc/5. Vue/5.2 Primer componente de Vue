@@ -1,0 +1,567 @@
+Desde que instalamos Laravel por primera vez, o desde que se creo el proyecto de Laravel por primera vez, viene con un componente que podemos visualizar en la sección de recursos en el folder de js.
+
+Este componente es el que nos permite crear componentes de Vue, y es el que vamos a utilizar para crear nuestro primer componente de Vue.
+
+Para crear nuestro primer componente de Vue, vamos a hacer lo siguiente:
+
+1. Abrimos la terminal y nos posicionamos en el folder de js.
+2. Ejecutamos el comando `vue create component-name` donde `component-name` es el nombre del componente que queremos crear.
+3. Se nos preguntará si queremos utilizar Vue CLI, y responderemos `si`.
+4. Se nos preguntará si queremos utilizar Vue Router, y responderemos `no`.
+
+
+resources/assets/js/app.js
+
+
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+require('./bootstrap');
+
+// window.Vue = require('vue');
+
+import Vue from 'vue';
+window.Vue = Vue;
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+/*
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+const app = new Vue({
+    el: '#app'
+});
+
+*/
+
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+// Envolvemos la creación de la app de Vue para que espere al navegador
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new Vue({
+        el: '#app'
+    });
+});
+
+
+Por un lado detemos app.js que esta registrando el componente del ejemplo que viene en la carpeta de componentes y por otro lado el registro, de la aplicación para enlazarla a vue.js.
+
+Notamos algo importante aca:
+
+que es el argumento o la opción, elemen a la hora de configurar nuestra nueva aplicación de Vue, esta esta enlazad con un selector de CSS este selector lo podemos encontrar 
+
+const app = new Vue({
+    el: '#app'
+});
+
+
+ese selector esta en 
+
+resources/views/layouts/app.blade.php
+
+<div id="app">
+</div>
+
+
+Es el padre de todos los comonentes o todos los elementos de nuestra pagina, eso significa que todo lo que este dentro del div con el id app    
+
+puede utilizar componente de vue por ejemplo el example component.
+
+vamos a abrir el archivo.
+
+resources/assets/js/components/ExampleComponent.vue
+
+<template>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card card-default">
+                    <div class="card-header">Example Component</div>
+
+                    <div class="card-body">
+                        I'm an example component.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        mounted() {
+            console.log('Component mounted.')
+        }
+    }
+</script>
+
+
+Esta configuración el componente tenemos dos partes.
+
+Por ua parte esta, el tenmplate que esta todo el html que esta generando nuestro componente y por otro lado tenemos la configuración de JS
+
+que esta exportandose de este escript
+
+Este es el que estamos configurando el componente que esta utlizando el html.
+
+Pa apoder utilizar este componante tenemos que colocar el texto o el nombre que esta apareciendo el nombre del registro del nuevo componente
+
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+Vamos a copiarlo y vamos a utilizarlo en alguna vista.
+
+Por ejemplo en el index de productos.
+
+resources/views/products/index.blade.php
+
+
+Arriba de todos los productos.
+
+<div class="">
+            <example-component>
+                
+            </example-component>
+        </div>
+
+Para poder montar el componente de ejemplo ahora en el navegador vamos a :
+
+componente de vue Example en proyecto de Ecommerce.
+
+Contexto:
+
+vamos a utilizar el primer componente de vue apoyandonos de un ejemplo del componente que  viene integrao con Laravel en nuestro proyecto de ecommerce.
+
+tenemos:
+
+/home/klvst3r/dev/laravel/ecomerce/resources/assets/js/app.js
+
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+require('./bootstrap');
+
+// window.Vue = require('vue');
+
+import Vue from 'vue';
+window.Vue = Vue;
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+/*
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+const app = new Vue({
+    el: '#app'
+});
+
+*/
+
+Vue.component('example-component', require('./components/ExampleComponent.vue'));
+
+// Envolvemos la creación de la app de Vue para que espere al navegador
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new Vue({
+        el: '#app'
+    });
+});
+
+vamoa intentar utilizarlo en nuestra vista por ejemplo:
+resources/views/products/index.blade.php
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container my-4">
+
+        <div class="">
+            <example-component>
+                
+            </example-component>
+        </div>
+
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+
+                {{-- Mensaje flash que aparecerá al eliminar y se borrará solo --}}
+                @if (session('status'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('status') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Listado de Productos</h4>
+                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
+                            Crear nuevo producto
+                        </a>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="ps-4">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col" class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $item)
+                                        <tr>
+                                            <th scope="row" class="ps-4 align-middle">{{ $item->id }}</th>
+                                            <td class="align-middle fw-bold">{{ $item->title }}</td>
+                                            <td class="align-middle text-muted">
+                                                {{ \Illuminate\Support\Str::limit($item->description, 60) }}
+                                            </td>
+                                            <td class="align-middle">${{ number_format($item->price, 2) }}</td>
+                                            <td class="text-end pe-4 align-middle">
+                                                <div class="d-flex justify-content-end align-items-center">
+                                                    {{-- Botón Ver --}}
+                                                    <a href="{{ route('products.show', $item->id) }}"
+                                                        class="btn btn-sm btn-outline-info me-1">
+                                                        Ver
+                                                    </a>
+
+                                                    @auth
+                                                        {{-- Botón Editar --}}
+                                                        <a href="{{ route('products.edit', $item->id) }}"
+                                                            class="btn btn-sm btn-outline-secondary me-1">
+                                                            Editar
+                                                        </a>
+
+                                                        {{-- Formulario Inline con Confirmación JS --}}
+                                                        <form action="{{ route('products.destroy', $item->id) }}" method="POST"
+                                                            class="d-inline mb-0"
+                                                            onsubmit="return confirm('¿Estás seguro de que quieres eliminar el producto &quot;{{ $item->title }}&quot;?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                Eliminar
+                                                            </button>
+                                                        </form>
+                                                    @endauth
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                No hay productos registrados en este momento.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if ($products->hasPages())
+                        <div class="card-footer bg-white d-flex justify-content-end py-3"
+                            style="margin-top: 1em; margin-bottom: 1em;">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Script encargado del desvanecimiento automático --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var alert = document.getElementById('success-alert');
+            if (alert) {
+                setTimeout(function() {
+                    // Quita la clase de Bootstrap para iniciar la animación visual
+                    alert.classList.remove('show');
+
+                    // Espera a que termine la animación y limpia el espacio del DOM por completo
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 4000); // Se muestra durante 4 segundos
+            }
+        });
+    </script>
+@endsection
+
+
+pero en el renderizado de intertia solo me aparece una etiqueta de esta forma.
+
+pero no es un compoente como tal, deberia tener la forma de un contenedor con un titulo y contenido.
+
+que esta pasando aca y por que no se muestra correctamente el componente requerido.
+
+en nuestro caso tenemos un detalle tecnico, ya que estamosmezcalndo Vue en el listado de productos que es una plantilla de bladecon vue.
+
+El problema que estás experimentando se debe a que estás mezclando Vue con una plantilla de Blade de Laravel, lo que puede causar conflictos en la renderización del componente.
+
+En lugar de utilizar un script de JavaScript puro para manejar la animación del alert, puedes utilizar Vue para crear un componente que maneje la animación y la renderización del alert.
+
+Aquí tienes un ejemplo de cómo podrías crear un componente de Vue para manejar el alert:
+
+```html
+<template>
+  <div v-if="showAlert" class="alert alert-success" id="success-alert">
+
+  Para que puedamos renderizar corectamente un componente de vue dentro de una vista con el motor de plantillas de blade. debemos asegurar de que el contenedor principal en el body tenga el id
+
+  <body>
+    <div id="app">
+        @yield('content')
+    </div>
+</body>
+
+
+entones primero registramos en los assets:
+
+resources/assets/js/app.js
+
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+require('./bootstrap');
+
+import Vue from 'vue';
+window.Vue = Vue;
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+// Registrar usando la forma clásica de Laravel Mix (Infallible para Vue 2)
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+// Envolvemos la creación de la app de Vue para esperar al DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new Vue({
+        el: '#app'
+    });
+});
+
+y en el layout lo invocamo sobre todo en la cabecera del coumento:
+
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+
+
+    <!-- Scripts -->
+    <!-- Puede qudar corregido anteponiendo /  -->
+    <!-- ej_ <link rel="stylesheet" href="/css/app.css"> -->
+    <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+    <script src="{{ asset('js/app.js') }}?v={{ time() }}" defer></script>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+
+    <!-- Styles -->
+    <!-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> -->
+    <!-- CSS -->
+    <!-- Tambien aca puede quedar: -->
+    <!-- <script src="/js/app.js"></script> -->
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+
+finalmente en el componente de ejemplo al llamrlo lo hacemos mediante el identificador del componente.
+
+resources/views/products/index.blade.php
+
+@extends('layouts.app')
+
+@section('content')
+    <div id="app" class="container my-4">
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-12">
+                <example-component></example-component>
+            </div>
+        </div>
+
+
+finalemente compojlamos los assets
+npm run dev
+y ahora nuestro comonente se vera en el index de ejemnplo:
+
+http://localhost:8000/products
+
+Example Component
+I'm an example component. 
+
+
+
+Entonces como parte del diclo de vida de un componente de vue, es que se ejecuto el metodo mount, cuando el comonente se monto dentro de nuestra pagina web, en ese momento como esta indicado en la descrićión dle componente.
+
+Tal como lo vemos en pantalla.
+
+Vamos ahora a registrar un comonente, propio.
+
+
+Para ello vamos a crear un nuevo folder dentro de la carpeta components, se llamara products para que ahi coloquemos todos nuestros componentes.
+
+Ahi adentro vamos a crear un nuevo archivo ProductsComponent.vue en el que vamos a colocar nuestro comonente.
+
+resources/assets/js/components/products/ProductsComponents.vue
+
+Notamos que nuestros componentes de Vue estan identificados porque termian con la extensión .vue
+
+Si esamos utilizando atom u otro editor y podemos ir a la seccion de preferencias o configuraciones y en la sección de install y vamo a buscar un paquete que nos permita el higligth de sintaxis de vue.
+
+Si estamos utilizando atom podemos recorrir al compoenente o extensión languaje-vue
+
+
+Para que cuando abramos un archivo con extension .vue distingue los elementos html y la parte de js.
+
+Si estoy utilizando Visual Studio Code podemos usar una extensión llamada: 
+Vue.js Extension Pack
+
+La cual nos permite tener un mejor visualización de los componentes de Vue.
+
+En este caso vamos a crear un componente que nos permita mostrar una lista de productos.
+
+Para ello vamos a crear un nuevo componente que se llamara ProductListComponent.vue
+
+resources/assets/js/components/products/ProductListComponent.vue
+
+En este componente vamos a crear un template que nos permita mostrar una lista de productos.
+
+Para ello vamos a utilizar el elemento ul y dentro de el vamos a utilizar el elemento li.
+
+En este caso vamos a utilizar un v-for para recorrer un array de productos y mostrarlos en la lista.
+
+
+Bien.
+
+Ahora en nuestro componente agregamos el template
+Nuestra estructura basica es:
+
+<template lang="html">
+
+</template>
+
+<script>
+    export default {
+        // Component logic goes here
+    }
+</script>
+
+<style lang="css">
+</style>
+
+Por ahora, vamos a poner lo siguiente.
+
+Terminando el ejemplo del componente d
+
+<template lang="html">
+    <p>Mi primer componente</p>
+</template>
+
+<script>
+    export default {
+        // Component logic goes here
+    }
+</script>
+
+<style lang="css">
+</style>
+
+debemos registrarlo en:
+
+resources/assets/js/app.js
+
+//Registramos nuestro componente de ejemplo, tiene que obtener la configuración del componente
+Vue.component('products-component', require('./components/products/ProductsComponent.vue').default);
+
+
+
+Vamos ahora a colocarlo.
+
+En el mismo lugar en el que previamente, habiamos colocado Example components
+
+resources/views/products/index.blade.php
+
+ <div class="row justify-content-center mb-4">
+            <div class="col-md-12">
+                <products-component></products-component>
+            </div>
+        </div>
+
+volvemos a compilar los assets.
+
+npm run dev
+Para que se registren los cambios 
+
+npm run watch-poll
+
+Listo tenemos nuestro primer componente, aunque solo es un titulo.
+
+una de las partes clave de un compoente es colocarle datos especificos, al componente, los daos se especifican en un metodo data que tiene que tener, el objeto del comnponente.
+
+de esta forma, el cual retornara los valores originales.
+
+<template lang="html">
+    <p>Mi primer componente {{ name }}</p>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: 'Products Component'
+    }
+  }
+}  
+</script>  
+
+<style lang="css">
+</style>
+
+toda la información del objeto data puede ser utilixzada, dentro del tamplate component, como por ejemplo, en nuestro ejemplo.
+
+As la sintaxis que venga el JS por mostrar el componente es la misma que utilzamos en blade, con las dobles llaves.
+
+Entonces vamos a imprimir el valor de la variable name, y vamos a atualizar como se muestra 
+
+
+con esto vemos el uso de vue como las directivas que añade, extra html, funciones AJAX. entre otros.
+

@@ -1,11 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container my-4">
+    <div id="app" class="container my-4">
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-12">
+                <products-component></products-component>
+            </div>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-md-12">
 
-                {{-- Mensaje flash que aparecerá al eliminar y se borrará solo --}}
                 @if (session('status'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                         {{ session('status') }}
@@ -44,28 +50,17 @@
                                             <td class="align-middle">${{ number_format($item->price, 2) }}</td>
                                             <td class="text-end pe-4 align-middle">
                                                 <div class="d-flex justify-content-end align-items-center">
-                                                    {{-- Botón Ver --}}
                                                     <a href="{{ route('products.show', $item->id) }}"
-                                                        class="btn btn-sm btn-outline-info me-1">
-                                                        Ver
-                                                    </a>
-
+                                                        class="btn btn-sm btn-outline-info me-1">Ver</a>
                                                     @auth
-                                                        {{-- Botón Editar --}}
                                                         <a href="{{ route('products.edit', $item->id) }}"
-                                                            class="btn btn-sm btn-outline-secondary me-1">
-                                                            Editar
-                                                        </a>
-
-                                                        {{-- Formulario Inline con Confirmación JS --}}
+                                                            class="btn btn-sm btn-outline-secondary me-1">Editar</a>
                                                         <form action="{{ route('products.destroy', $item->id) }}" method="POST"
-                                                            class="d-inline mb-0"
-                                                            onsubmit="return confirm('¿Estás seguro de que quieres eliminar el producto &quot;{{ $item->title }}&quot;?');">
+                                                            class="d-inline mb-0" onsubmit="return confirm('¿Seguro?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                                Eliminar
-                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-outline-danger">Eliminar</button>
                                                         </form>
                                                     @endauth
                                                 </div>
@@ -73,9 +68,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-center py-4 text-muted">
-                                                No hay productos registrados en este momento.
-                                            </td>
+                                            <td colspan="5" class="text-center py-4 text-muted">No hay productos.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -84,8 +77,7 @@
                     </div>
 
                     @if ($products->hasPages())
-                        <div class="card-footer bg-white d-flex justify-content-end py-3"
-                            style="margin-top: 1em; margin-bottom: 1em;">
+                        <div class="card-footer bg-white d-flex justify-content-end py-3">
                             {{ $products->links() }}
                         </div>
                     @endif
@@ -93,23 +85,20 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- Script encargado del desvanecimiento automático --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var alert = document.getElementById('success-alert');
-            if (alert) {
-                setTimeout(function() {
-                    // Quita la clase de Bootstrap para iniciar la animación visual
-                    alert.classList.remove('show');
-
-                    // Espera a que termine la animación y limpia el espacio del DOM por completo
+    </div> @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var alert = document.getElementById('success-alert');
+                if (alert) {
                     setTimeout(function() {
-                        alert.remove();
-                    }, 500);
-                }, 4000); // Se muestra durante 4 segundos
-            }
-        });
-    </script>
+                        alert.classList.remove('show');
+                        setTimeout(function() {
+                            alert.remove();
+                        }, 500);
+                    }, 4000);
+                }
+            });
+        </script>
+    @endpush
 @endsection

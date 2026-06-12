@@ -17,7 +17,8 @@
     <!-- Puede qudar corregido anteponiendo /  -->
     <!-- ej_ <link rel="stylesheet" href="/css/app.css"> -->
     <!-- <script src="{{ asset('js/app.js') }}" defer></script> -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
+    <script src="{{ asset('js/app.js') }}?v={{ time() }}" defer></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -28,6 +29,7 @@
     <!-- CSS -->
     <!-- Tambien aca puede quedar: -->
     <!-- <script src="/js/app.js"></script> -->
+    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
 

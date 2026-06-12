@@ -1,4 +1,3 @@
-
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -6,8 +5,6 @@
  */
 
 require('./bootstrap');
-
-// window.Vue = require('vue');
 
 import Vue from 'vue';
 window.Vue = Vue;
@@ -18,18 +15,15 @@ window.Vue = Vue;
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-/*
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+// Registrar usando la forma clásica de Laravel Mix (Infallible para Vue 2)
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-const app = new Vue({
-    el: '#app'
-});
+//Registramos nuestro componente de ejemplo, tiene que obtener la configuración del componente
+//Vue.component('products-component', require('./components/ProductsComponent.vue').default);
+Vue.component('products-component', require('./components/products/ProductsComponent.vue').default);
 
-*/
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
-
-// Envolvemos la creación de la app de Vue para que espere al navegador
+// Envolvemos la creación de la app de Vue para esperar al DOM
 document.addEventListener('DOMContentLoaded', () => {
     const app = new Vue({
         el: '#app'
