@@ -1,0 +1,276 @@
+Despues de que vimos ocmo poder imprimir información en vue, una de las cosas mas comunes que hacemos es recorrer un arreglo o una colleccion para imprmir o colocar elementos por cada uno de los que estan contenidos dentro de la coleccion indicada.
+
+v-for es una de las directivas de Vue que podemos utilizar para recorrer un arreglo.
+
+Como ejemplo vamos a colocar un arreglo. 
+
+ return {
+      name: 'Products Component',
+      products: [
+        {title: 'Curso Ruby on Rails', price: 100, description: 'El mejor curso de Ruby on Rails'},
+        {title: 'Curso Vue.js', price: 150, description: 'El mejor curso de Vue.js'},
+        {title: 'Curso Laravel', price: 120, description: 'El mejor curso de Laravel'}
+      ]
+    }
+
+Estos elementos los vamos a obtener de la bd, de momento los definimos en nuestro arreglo.
+
+Suponiendo que querems imprimir un card por cada uno de los elementos que tenemos, podemos utilizar la directiva v-for para iterar sobre el arreglo y mostrar un card por cada uno de los elementos.
+
+entonces en nuestro template podemos empezar a colcoar el diseño de las tarjetas.
+
+Entonces tenemos que utilizar cada uno de los elementos que tenemos en el arreglo
+  <div v-for="product in products" :key="product.title">
+        <h2>{{ product.title }}</h2>
+        <p>{{ product.description }}</p>
+        <p>Precio: {{ product.price }}</p>
+    </div>
+
+Aca el primer argumento que vamos a pasar es el objeto, en el cual se va a ir almacenando cada uno de los que estan contenidos en la colección, despues tenemos que separarlos con la palabra in, y despues donde estan contenidos que en nuestro casa es en el objeto data y se llama products, podemos agrgar un clase llamada card y dentro enemos un padding y vamos a agregar, la estructura algo asi:
+
+nuestro componente queda:
+
+<template lang="html">
+    <div class="products-container">
+        
+        <p class="text-muted">Mi primer componente {{ name }}</p>
+        
+        <div v-for="product in products" :key="product.title" class="card padding mb-3 shadow-sm">
+            <header class="bg-primary padding">
+                </header>
+            <div class="card-body">
+                <h2 class="card-title">{{ product.title }}</h2>
+                <h4 class="card-subtitle mb-2 text-muted">Precio: ${{ product.price }}</h4>
+                <p class="card-text">{{ product.description }}</p>
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: 'Products Component',
+      products: [
+        {title: 'Curso Ruby on Rails', price: 100, description: 'El mejor curso de Ruby on Rails'},
+        {title: 'Curso Vue.js', price: 150, description: 'El mejor curso de Vue.js'},
+        {title: 'Curso Laravel', price: 120, description: 'El mejor curso de Laravel'}
+      ]
+    }
+  }
+}  
+</script>  
+
+<style lang="css">
+</style>
+
+quedo registrado en:
+resources/assets/js/app.js
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+
+require('./bootstrap');
+
+import Vue from 'vue';
+window.Vue = Vue;
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+
+// Registrar usando la forma clásica de Laravel Mix (Infallible para Vue 2)
+Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+
+//Registramos nuestro componente de ejemplo, tiene que obtener la configuración del componente
+//Vue.component('products-component', require('./components/ProductsComponent.vue').default);
+Vue.component('products-component', require('./components/products/ProductsComponent.vue').default);
+
+
+// Envolvemos la creación de la app de Vue para esperar al DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new Vue({
+        el: '#app'
+    });
+});
+
+y en el navcegador lo visualilzamos en:
+http://localhost:8000/products
+
+es importante mencionar que teniamos un error.
+
+ in ./resources/assets/js/components/products/ProductsComponent.vue?vue&type=template&id=83328776&lang=html (./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??
+
+ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/products/ProductsComponent.vue?vue&type=template&id=83328776&lang=html)
+
+Module Error (from ./node_modules/vue-loader/lib/loaders/templateLoader.js):
+
+(Emitted value instead of an instance of Error)  
+
+
+ Errors compiling template:
+
+
+ tag <div> has no matching end tag.
+
+
+ 1  |   
+
+ 2  |  <p>Mi primer componente {{ name }}</p>
+
+    |                                          
+
+ 3  |  <div v-for="product in products" :key="product.title">
+
+    |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ 4  |      <h2>{{ product.title }}</h2>
+
+
+ Component template should contain exactly one root element. If you are using v-if on multiple elements, use v-else-if to chain them instead.
+
+
+ 1  |   
+
+ 2  |  <p>Mi primer componente {{ name }}</p>
+
+    |                                          
+
+ 3  |  <div v-for="product in products" :key="product.title">
+
+    |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ 4  |      <h2>{{ product.title }}</h2>
+
+    |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ 5  |      <p>{{ product.description }}</p>
+
+    |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ 6  |      <p>Precio: {{ product.price }}</p>
+
+    |  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+webpack compiled with 1 error
+
+
+✖ Mix
+
+ Compiled with some errors in 65.19ms
+
+
+ERROR in ./resources/assets/js/components/products/ProductsComponent.vue?vue&type=template&id=83328776&lang=html (./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/lib/loaders/templateLoader.js??
+
+ruleSet[1].rules[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/assets/js/components/products/ProductsComponent.vue?vue&type=template&id=83328776&lang=html)
+
+Module Error (from ./node_modules/vue-loader/lib/loaders/templateLoader.js):
+
+(Emitted value instead of an instance of Error)  
+
+
+ Errors compiling template: 
+
+ y esto es por queEl compilador de Vue te está avisando de una regla de oro súper estricta de Vue 2 (que es la versión que estamos usando por tu sintaxis).
+
+El error clave es este:
+
+    Component template should contain exactly one root element.
+
+¿Por qué pasa esto?
+
+En Vue 2, todo el contenido que pongas dentro de las etiquetas <template> debe estar envuelto obligatoriamente por un único contenedor padre (un solo elemento raíz).
+
+En tu código actual tienes dos elementos "hermanos" sueltos en la raíz del template:
+
+    El elemento <p>Mi primer componente {{ name }}</p>
+
+    El elemento <div v-for="...">...</div>
+
+Para solucionarlo, simplemente debemos envolver todo lo que esté dentro de <template> en un único <div> principal.
+
+Adicionalmente, en Vue siempre que uses un v-for es obligatorio añadir un atributo :key único para ayudar a Vue a renderizar de forma óptima.
+
+con esto podemos quitar el listado que esta mostrando laravel.
+
+Par ello dentro de Index.blade y todo el foreach lo quitamo.
+
+ {{-- <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Listado de Productos</h4>
+                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
+                            Crear nuevo producto
+                        </a>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" class="ps-4">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col" class="text-end pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($products as $item)
+                                        <tr>
+                                            <th scope="row" class="ps-4 align-middle">{{ $item->id }}</th>
+                                            <td class="align-middle fw-bold">{{ $item->title }}</td>
+                                            <td class="align-middle text-muted">
+                                                {{ \Illuminate\Support\Str::limit($item->description, 60) }}
+                                            </td>
+                                            <td class="align-middle">${{ number_format($item->price, 2) }}</td>
+                                            <td class="text-end pe-4 align-middle">
+                                                <div class="d-flex justify-content-end align-items-center">
+                                                    <a href="{{ route('products.show', $item->id) }}"
+                                                        class="btn btn-sm btn-outline-info me-1">Ver</a>
+                                                    @auth
+                                                        <a href="{{ route('products.edit', $item->id) }}"
+                                                            class="btn btn-sm btn-outline-secondary me-1">Editar</a>
+                                                        <form action="{{ route('products.destroy', $item->id) }}" method="POST"
+                                                            class="d-inline mb-0" onsubmit="return confirm('¿Seguro?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                                        </form>
+                                                    @endauth
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">No hay productos.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if ($products->hasPages())
+                        <div class="card-footer bg-white d-flex justify-content-end py-3">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+
+                </div>
+
+Para dejar solo las tarhetas de v-for                
+
+Las tarjetas visualizan solo el arreglo que definimos, pero no vienen de la bd.
+
+La idea es que provengan de una BD.
+

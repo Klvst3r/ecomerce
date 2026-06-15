@@ -19,7 +19,7 @@
                     </div>
                 @endif
 
-                <div class="card shadow-sm">
+                {{-- <div class="card shadow-sm">
                     <div class="card-header bg-white d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Listado de Productos</h4>
                         <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
@@ -82,7 +82,7 @@
                         </div>
                     @endif
 
-                </div>
+                </div> --}}
             </div>
         </div>
 
