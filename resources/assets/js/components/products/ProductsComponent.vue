@@ -3,15 +3,12 @@
         
         <p class="text-muted">Mi primer componente {{ name }}</p>
         
-        <div v-for="product in products" :key="product.title" class="card padding mb-3 shadow-sm">
-            <header class="bg-primary padding">
-                </header>
-            <div class="card-body">
-                <h2 class="card-title">{{ product.title }}</h2>
-                <h4 class="card-subtitle mb-2 text-muted">Precio: ${{ product.price }}</h4>
-                <p class="card-text">{{ product.description }}</p>
-            </div>
-        </div>
+       <div class="row">
+        <product-card-component v-bind:product="product" v-for="product in products" :key="product.title">
+          
+        </product-card-component>
+        
+       </div>
 
     </div>
 </template>

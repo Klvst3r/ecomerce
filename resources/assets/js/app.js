@@ -22,6 +22,9 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 //Vue.component('products-component', require('./components/ProductsComponent.vue').default);
 Vue.component('products-component', require('./components/products/ProductsComponent.vue').default);
 
+//Regisramos el nuevo componente.
+Vue.component('product-card-component', require('./components/products/ProductCardComponent.vue').default);
+
 
 // Envolvemos la creación de la app de Vue para esperar al DOM
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,0 +1,190 @@
+Usualmente uno de nuestros componentes se integra por optros componentes personalizados a los que tenemos que enviarles información dewsde el contenedor al que llamaremos el padre, por ejempolo llamaremos un nuevo comonente.
+
+resources/assets/js/components/products/ProductCardComponent.vue
+
+Creamos la estructura bvasica del componente
+teniendo la estructura incial del componente:
+
+<template lang="html">
+    <p>Mi primer componente</p>
+</template>
+
+<script>
+    export default {
+        
+    }
+</script>
+
+<style lang="css">
+</style>
+
+
+Evitamos momentaneamoente los estilo. Y Para poder utilizarlo tenemos que indicar en app.js
+que lo vamos a utilizar.
+
+resources/assets/js/app.js
+
+import Vue from 'vue';
+import ProductCardComponent from './components/products/ProductCardComponent.vue';
+
+Vue.component('product-card', ProductCardComponent);
+
+new Vue({
+    el: '#app',
+});
+
+Y en el template de la vista de productos podemos utilizarlo.
+
+resources/views/products/index.blade.php
+
+<div id="app">
+    <product-card></product-card>
+</div>
+
+Y ahora si lo podemos ver en el navegador.
+
+Ahora vamos a enviarle información al componente hijo, para ello utilizamos la propiedad props.
+
+resources/assets/js/components/products/ProductCardComponent.vue
+
+Vue.component('products-card-component', require('./components/products/ProductCardComponent.vue').default);
+
+
+
+Entonces ya con eso, a este componente vamos a traerle toda el marcado que compone la vista de un componente individual.
+ <div v-for="product in products" :key="product.title" class="card padding mb-3 shadow-sm">
+          <div class="card">
+            <header class="bg-primary padding">
+                </header>
+            <div class="card-body">
+                <h2 class="card-title">{{ product.title }}</h2>
+                <h4 class="card-subtitle mb-2 text-muted">Precio: ${{ product.price }}</h4>
+                <p class="card-text">{{ product.description }}</p>
+            </div>
+            </div>
+        </div>
+
+
+En productsComponent.vue incluimos asi.
+
+<template lang="html">
+    <div class="products-container">
+        
+        <p class="text-muted">Mi primer componente {{ name }}</p>
+        
+       <div class="row">
+        <product-card-component v-for="product in products" >
+          
+        </product-card-component>
+        
+       </div>
+
+    </div>
+</template>
+
+Ahora lo que necesitamos es enviarle la información de un producto desde un contenedor que esta hacia ese componente.
+
+Para eso tenemos dentro de Vue un concepto al que llamamos los props
+Los props, son propiedades que se especifican que pueden ser enviadas via atributos, hacia nuestro componente, aca es donde en el JSON Props que expórtamos, del objeto de configuración del componente, es donde especificamos otro objeto, todos los props que nuestro componente va a tener.
+
+Como por ejemplo un prop del tipo products.
+
+Cada uno de los props recibe un JSON de configuración en el que por ejemplo podemo especificar el tipo de dato que esperamos recibir por ejemplo Object.
+
+enemos enotnces asi. en el componente ProductCardComponent
+
+
+Una vez que especificamos que tenemos un Prop Product
+
+ export default {
+        props:{
+            product: {
+                type: Object
+                
+            }
+        }
+    }
+
+Vamos a poder enviar hacia nuestro componente hijo esa información, vamos a intentarlo de la forma en que se nos ocurra 
+
+por ejemplo.
+
+Entonces en el componente productsComponent
+
+<template lang="html">
+    <div class="products-container">
+        
+        <p class="text-muted">Mi primer componente {{ name }}</p>
+        
+       <div class="row">
+        <product-card-component :product="product" v-for="product in products" :key="product.title">
+          
+        </product-card-component>
+        
+       </div>
+
+    </div>
+</template>
+
+aunque para efectos de interpolación debemos utilizar la directiva v-bind: con el argumento para esa directiva por eso lo separamos con dos puntos.
+
+quedando:
+
+<product-card-component :product="product" v-for="product in products" :key="product.title">
+          
+        </product-card-component>
+
+aunque podremos utilizar como en la vieja escuela de la siguiente manera:
+
+        <product-card-component v-bind:product="product" v-for="product in products" :key="product.title">
+          
+        </product-card-component>
+
+Con esto esamos enviando esta inforamción hacia nuestro producto.
+
+Con esto ya no deberia habver error y los componentes deberian de verse de la misma manera en el componente Productos.
+
+http://localhost:8000/products
+
+pero el resultado es:
+
+que no vemos los comonentes.
+
+nuetra estructura que construimos queda de la siguiente manera:
+
+
+[Tu Base de Datos] -> [Controlador Laravel] -> [Vista Blade (index.blade.php)]
+                                                            |
+                                                   [ProductsComponent.vue] (Padre)
+                                                            |  (recorre el array con v-for)
+                                                   [ProductCardComponent.vue] (Hijo)
+
+Antes de que esta versión de Vue 2 y Laravel Mix quede en el olvido, vas a dominarla. Pasaste de tener etiquetas HTML rotas y errores de compilación que te hacían querer apagar la computadora, a tener componentes que se comunican perfectamente entre sí a través de props. ¡Eso es un avance enorme!
+
+
+Para el futuro cuando no tengamos que utilizar arreglos estatios para los contenidos de tarjetas, utilizaremos bases de datos ahi tendremos un camino por recorrer y aca tengo un apequeña guia de seguimiento:
+
+El flujo de la información (De la Base de Datos a tu Tarjeta de Vue)
+
+Actualmente tus tarjetas tienen datos fijos (hardcodeados) en Vue. Cuando hagamos el cambio asíncrono, el camino que recorrerán tus datos reales será este:
+
+    La Base de Datos (MySQL): Guarda la información real de tus productos o gastos médicos (id, título, precio, descripción).
+
+    Laravel Route & Controller (La API): En lugar de retornar una vista de Blade con HTML, el controlador consultará la base de datos y preparará los datos.
+
+    Laravel API Resources (El filtro): Es una capa espectacular de Laravel que toma los datos crudos de la base de datos y los "transforma" o limpia antes de enviarlos (por ejemplo, asegurando que los precios sean números, ocultando campos secretos, o formateando fechas).
+
+    JSON (El idioma universal): Laravel transformará esos datos en un formato de texto plano estructurado llamado JSON (JavaScript Object Notation). Es el formato que entienden tanto Laravel como Vue, Python, o cualquier tecnología.
+
+    Axios (El cartero): Es una librería de JavaScript que vive en tu frontend. Su único trabajo es viajar al servidor en segundo plano (usando AJAX, que significa Asynchronous JavaScript and XML, es decir, cargar datos sin recargar la página), pedir el JSON y regresar a Vue con la bolsa llena de datos.
+
+    Vue (El receptor): Vue recibe el JSON que le trajo Axios, actualiza su array products de forma reactiva y, mágicamente, tus componentes <product-card-component> se dibujan en la pantalla con datos reales.
+
+Ahora estamos separando en una parte cada uno de los productos que forman parte, de nuestra base de datos.
+
+Un dato importante es que introducimos una nueva directiva e importante en el desarrollo de aplcaciones de vue que es v-bind, que lo que hace es sincronizar esta inforamción, con el atributo, en el caso de un prop, la sincronización fluye de una sola via, es decir, si nosotros sincronizamos el productos desde cero para el padre, el hijo vera la acutallización y sin que nosotros hagamos absolutamente nada, el componente se va a actualizar.
+
+en cambio si nosotros modificamos el prop desde el hijo el padre no se enterara de esa modificación.
+
+Asi es ocmo funciona v-bind.
+
