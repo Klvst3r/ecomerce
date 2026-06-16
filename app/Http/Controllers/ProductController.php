@@ -34,6 +34,10 @@ class ProductController extends Controller
         // O si prefieres traer todos de golpe: $products = Product::all();
         $products = Product::paginate(10);
 
+        if ($request->wantsJson()) {
+            //return response()->json($products);
+        }
+
         // Retornamos la vista pasándole la colección de productos
         return view('products.index', compact('products'));
     }

@@ -1,0 +1,129 @@
+una vez que nuestros componentes estan listos lo que necesitamos es que nuestra información tambien este, para esto vamos a sustituir nuestros datos falsos por datos qu de verdad probengan de la bd.
+
+
+
+De ProductsComponent
+
+<template lang="html">
+    <div class="products-container">
+        
+        <p class="text-muted">Mi primer componente {{ name }}</p>
+        
+       <div class="row">
+        <product-card-component v-bind:product="product" v-for="product in products" :key="product.title">
+          
+        </product-card-component>
+        
+       </div>
+
+    </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: 'Products Component',
+      products: [
+        {title: 'Curso Ruby on Rails', price: 100, description: 'El mejor curso de Ruby on Rails'},
+        {title: 'Curso Vue.js', price: 150, description: 'El mejor curso de Vue.js'},
+        {title: 'Curso Laravel', price: 120, description: 'El mejor curso de Laravel'}
+      ]
+    }
+  }
+}  
+</script>  
+
+<style lang="css">
+</style>
+
+
+Lo primero que tenemos que hacer es una opcion de nuestro servidor que nos envien, la inforamción que necesitamos por ahora todos nuestros controladores, envian a vistas html que no serviran a nuestro codigo en JS.
+
+Para cambiar esto, primero vamos a insertar o inyectar un objeto de la clase Request a nuestra funcion index.
+
+Entonces en el controlador en el metodo index tenemos.
+
+ /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // Consultamos todos los productos de la base de datos de forma paginada (por ejemplo, 10 por página)
+        // O si prefieres traer todos de golpe: $products = Product::all();
+        $products = Product::paginate(10);
+
+        // Retornamos la vista pasándole la colección de productos
+        return view('products.index', compact('products'));
+    }
+
+Primero vamos a inyectar un objeto de la clase request a nuestro funcion index, despues vamos a utilizar un metodo de laravel, que es parte del obeto request que es el metodo wantsJson()
+
+Este metodo devuelve verdadero cuando se interpreta que el cliente necesita este tipo de datos del servidor.
+
+    if ($request->wantsJson()) {
+
+            return $products->toJson();
+        }
+
+
+Esto se puede deducir de encabezados que por ejemplo el encabezado acepts que puede en oncaciones aplicar con el valor aplicateJson indicando que lo que el cliente requiere o acepta es la estructura en Json y no en otro formato, entonces utilizando este tipo de inforamción.
+
+el sevidor debe dedicir que debe enviar Json, y esta instruccion devuelve verdadero.
+
+En caso de que no se interprete asi, o venga de una peticion tradicional del navegador, este metodo devuelve falso y asi continuamos nuesto flujo
+
+
+Lo que vamos a retornar es la version de nuestros sproductos en Json, en primera instancia hacemos esto de la siguiente manera
+            return $products->toJson();
+
+Este metodo viene con Eloquent que sirve para serializar el resultado de una consulta al formato Json y con esto enviamos al formato Json.
+
+Para probar el resultado de esta nueva modificación al codigo vamos a tener que utilizar herramientas externas auque lo haremos despues con AJAX.
+
+Pära probar podemos utilizar Postman
+
+Que es una interfaz visual para poder realizar peticiones y es my util para probar APIS.
+
+si no quremos instalar Postman, una alternativa puede ser utilizar curl
+
+//curl -i -H "Accept: application/json" -H "Content-Type: application/json"
+
+        curl -i -H "Accept: application/json" "http://localhost:8000/products"
+
+este es el comando que podemos utilizar par que Json con curl puedamos hacer una peticion hacia, nuestra dirección, pero con el encabezado que indique que estamos solicitando Json para que el metodo funcione.
+
+Lo pegamos en la terminal devilvera la respuesta con la inforamción en JSON, eso significa que nuestro metodo esta funcionando apropiadamente.
+
+
+nauthorized
+Host: localhost:8000
+Date: Tue, 16 Jun 2026 04:59:36 GMT
+Connection: close
+X-Powered-By: PHP/7.4.33
+Cache-Control: no-cache, private
+Date: Tue, 16 Jun 2026 04:59:36 GMT
+Content-Type: application/json
+Set-Cookie: XSRF-TOKEN=eyJpdiI6ImxCQ1B2VWJjeWJcL1JjeFBVeTZiRGRRPT0iLCJ2YWx1ZSI6Ik9OckpjTDh2OUEyR0t3b25yZVdpU1wvRTM5S2wrV1wvOFVINFFoXC9oQmVaaG9YSHFXd1BXUTQ2aUQ3OHpIVU5cLytDIiwibWFjIjoiOWQzNjZjMmViMDRhNjI1YTFjNTg1NTFiYWFhODExZDNjOTNmOTJjMTIxNDFkYzY1ZWRmMjEyMjViYTk1OWYwOSJ9; expires=Tue, 16-Jun-2026 06:59:36 GMT; Max-Age=7200; path=/
+Set-Cookie: laravel_session=eyJpdiI6IkxqeUtBNXZRZ3FZZzVHS090M0FmSUE9PSIsInZhbHVlIjoiQ2Q2SFE5Z0JnbXp0VkdZUEIxYUZ1SXFYNmpjMU04NEJMQWR5czFLdXNLYnVONElTWmVIbGQxVld6TldXMGJcL1EiLCJtYWMiOiI1YmYyMjA0ZDExMDY5MTc1MzlkYjJiYWVlMGFmNzYwYWRkM2U4MmIzZjZjNGQzMWUyMjg2ZTY0NDdmMTg0MTIwIn0%3D; expires=Tue, 16-Jun-2026 06:59:36 GMT; Max-Age=7200; path=/; httponly
+
+{"message":"Unauthenticated."}⏎                                                                                
+
+
+Significa
+
+Si lo hacemos desde Postman para que los que lo quieran hacer de forma mas vicual, tambien hay qye descargar, Pstman, 
+
+Podemos hacerlo desde:
+
+    https://www.postman.com/apps
+
+
+seleccionamos la plataforma y la instalación es muy sencilla.
+
+con curl podemos agregar el encabezado accept para que sea iguala a aplication-Json y nuestro servidor sepa que debe responder con una respuesta JSON.
+
+cambiamos el formato por Json y veremos la informaciópn que se nos esta enviando.
+
